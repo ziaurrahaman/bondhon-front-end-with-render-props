@@ -22,20 +22,26 @@ const index = () => {
             dataFromBackend,
             picState,
             onImageSelect,
-            picOpenCloseLefRightFunction
+            picOpenCloseLefRightFunction,
+            goomPicSubmit,
+            fingerVerify,
+            LeftFP
           ) => (
             <Groom
               groomInfo={groomState}
               onChange={groomHandleChange}
               onSubmit={onSubmit}
               getUserById={groomGetUserById}
-              title="Groom"
+              title="G"
               onFetchNidData={onFetchNidData}
               formError={formError}
               data={dataFromBackend}
               picState={picState}
               picOpenCloseLefRightFunction={picOpenCloseLefRightFunction}
               onImageSelect={onImageSelect}
+              goomPicSubmit={goomPicSubmit}
+              fingerVerify={fingerVerify}
+              LeftFP={LeftFP}
             />
           )}
         </BrideGroomAndMarriageInfoRenderProps>

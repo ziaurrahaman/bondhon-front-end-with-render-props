@@ -221,6 +221,7 @@ const Groom = (props) => {
   };
 
   useEffect(() => {
+    console.log("propsGroomINfooo", typeof props.groomInfo);
     setAllFormContext(AllFormContext.fields);
     setAllFormContext2(AllFormContext.fields2);
     props.getUserById();
@@ -313,7 +314,7 @@ const Groom = (props) => {
                               size="small"
                               variant="outlined"
                               onChange={props.onChange}
-                              value={props.groomState.nid}
+                              value={props.groomInfo.nid}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -670,7 +671,7 @@ const Groom = (props) => {
                           props.picOpenCloseLefRightFunction.handleOpenPic
                         }
                         src={
-                          props.groomPic.groomImage
+                          props.goomPicSubmit.groomImage
                             ? flagForImage + props.groomPic.groomImage
                             : "/groom.png"
                         }
@@ -719,7 +720,7 @@ const Groom = (props) => {
                         onClick={
                           props.picOpenCloseLefRightFunction.handleOpenFinger
                         }
-                        src={fingerVerify ? "/Success2.png" : "/fng.png"}
+                        src={props.fingerVerify ? "/Success2.png" : "/fng.png"}
                         alt="Bride Finger Right"
                         width={120}
                         height={120}
@@ -736,7 +737,9 @@ const Groom = (props) => {
                         onClick={
                           props.picOpenCloseLefRightFunction.handleOpenLeft
                         }
-                        src={LeftFP ? "/sig.jpg" : "/digital-signature.png"}
+                        src={
+                          props.LeftFP ? "/sig.jpg" : "/digital-signature.png"
+                        }
                         alt="Bride Finger Left"
                         width={120}
                         height={120}
@@ -762,7 +765,7 @@ const Groom = (props) => {
                           variant="outlined"
                           startIcon={<SendIcon />}
                           onClick={
-                            props.picOpenCloseLefRightFunction.openLeft
+                            props.picOpenCloseLefRightFunction
                               .handleOnSubmitLeftFP
                           }
                         >

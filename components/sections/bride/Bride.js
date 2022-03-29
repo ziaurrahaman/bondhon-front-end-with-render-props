@@ -88,8 +88,14 @@ const Bride = (props) => {
 
   console.log("dataType=================", dataType);
 
+  const [openPic, setOpenPic] = useState(false);
+  const [openRight, setOpenRight] = useState(false);
+  const [openLeft, setOpenLeft] = useState(false);
+  const [openCamera, setOpenCamera] = useState(false);
+
   const [allFormContext, setAllFormContext] = useState([]);
   const [allFormContext2, setAllFormContext2] = useState([]);
+  const groomPayload = useSelector((state) => state.groomReg);
 
   function giveValueToTextField(index) {
     const ids = [
@@ -215,6 +221,7 @@ const Bride = (props) => {
   };
 
   useEffect(() => {
+    console.log("propsGroomINfooo", typeof props.groomInfo);
     setAllFormContext(AllFormContext.fields);
     setAllFormContext2(AllFormContext.fields2);
     props.getUserById();
@@ -307,7 +314,7 @@ const Bride = (props) => {
                               size="small"
                               variant="outlined"
                               onChange={props.onChange}
-                              value={props.groomState.nid}
+                              value={props.groomInfo.nid}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -664,7 +671,7 @@ const Bride = (props) => {
                           props.picOpenCloseLefRightFunction.handleOpenPic
                         }
                         src={
-                          props.groomPic.groomImage
+                          props.goomPicSubmit.groomImage
                             ? flagForImage + props.groomPic.groomImage
                             : "/bride.png"
                         }
@@ -713,7 +720,7 @@ const Bride = (props) => {
                         onClick={
                           props.picOpenCloseLefRightFunction.handleOpenFinger
                         }
-                        src={fingerVerify ? "/Success2.png" : "/fng.png"}
+                        src={props.fingerVerify ? "/Success2.png" : "/fng.png"}
                         alt="Bride Finger Right"
                         width={120}
                         height={120}
@@ -730,7 +737,9 @@ const Bride = (props) => {
                         onClick={
                           props.picOpenCloseLefRightFunction.handleOpenLeft
                         }
-                        src={LeftFP ? "/sig.jpg" : "/digital-signature.png"}
+                        src={
+                          props.LeftFP ? "/sig.jpg" : "/digital-signature.png"
+                        }
                         alt="Bride Finger Left"
                         width={120}
                         height={120}
@@ -756,7 +765,7 @@ const Bride = (props) => {
                           variant="outlined"
                           startIcon={<SendIcon />}
                           onClick={
-                            props.picOpenCloseLefRightFunction.openLeft
+                            props.picOpenCloseLefRightFunction
                               .handleOnSubmitLeftFP
                           }
                         >

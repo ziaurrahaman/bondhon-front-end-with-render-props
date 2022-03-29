@@ -653,7 +653,8 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
 
   // groom OnSubmit function
 
-  let onSubmitData = async (e, userType) => {
+  let onSubmitData = async (e, userType, payloadFromMarriageInof) => {
+    console.log("GroomINfoooooooooooooooooooo", payloadFromMarriageInof);
     console.log(`formErrro: ${formErrors}`);
     if (e) {
       e.preventDefault();
@@ -662,7 +663,10 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     try {
       if (data !== null) {
         const checkExistanceResult = await axios.get(
-          checkCitizenAndAddressUrl + groomInfo.nid
+          checkCitizenAndAddressUrl +
+            (payloadFromMarriageInof
+              ? payloadFromMarriageInof.nid
+              : groomInfo.nid)
         );
         console.log("existanceResult", checkExistanceResult);
 
@@ -674,32 +678,64 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
           const result = await axios.put(citizenUpdateUrl, {
             citizen_id: citizen_table_id,
             citizen_doc_type: "NID",
-            citizen_doc_no: groomInfo.nid,
+            citizen_doc_no: payloadFromMarriageInof
+              ? payloadFromMarriageInof.nid
+              : groomInfo.nid,
 
-            citizen_name: groomInfo.name,
-            citizen_dob: groomInfo.dob,
-            citizen_mobile: groomInfo.mobile_no,
-            citizen_email: groomInfo.email,
-            citizen_religion: groomInfo.relegion,
-            citizen_father_name: groomInfo.father_name,
+            citizen_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.name
+              : groomInfo.name,
+            citizen_dob: payloadFromMarriageInof
+              ? payloadFromMarriageInof.dob
+              : groomInfo.dob,
+            citizen_mobile: payloadFromMarriageInof
+              ? payloadFromMarriageInof.mobile_no
+              : groomInfo.mobile_no,
+            citizen_email: payloadFromMarriageInof
+              ? payloadFromMarriageInof.email
+              : groomInfo.email,
+            citizen_religion: payloadFromMarriageInof
+              ? payloadFromMarriageInof.relegion
+              : groomInfo.relegion,
+            citizen_father_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.father_name
+              : groomInfo.father_name,
             citizen_father_nid: 0,
-            citizen_mother_name: groomInfo.mother_name,
+            citizen_mother_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.mother_name
+              : groomInfo.mother_name,
             citizen_mother_nid: 0,
           });
           console.log("citUPPPUPPUPPUPPU", result);
         } else {
           const result = await axios.post(citizenCreateUrl, {
             citizen_doc_type: "NID",
-            citizen_doc_no: groomInfo.nid,
+            citizen_doc_no: payloadFromMarriageInof
+              ? payloadFromMarriageInof.nid
+              : groomInfo.nid,
 
-            citizen_name: groomInfo.name,
-            citizen_dob: groomInfo.dob,
-            citizen_mobile: groomInfo.mobile_no,
-            citizen_email: groomInfo.email,
-            citizen_religion: groomInfo.relegion,
-            citizen_father_name: groomInfo.father_name,
+            citizen_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.name
+              : groomInfo.name,
+            citizen_dob: payloadFromMarriageInof
+              ? payloadFromMarriageInof.dob
+              : groomInfo.dob,
+            citizen_mobile: payloadFromMarriageInof
+              ? payloadFromMarriageInof.mobile_no
+              : groomInfo.mobile_no,
+            citizen_email: payloadFromMarriageInof
+              ? payloadFromMarriageInof.email
+              : groomInfo.email,
+            citizen_religion: payloadFromMarriageInof
+              ? payloadFromMarriageInof.relegion
+              : groomInfo.relegion,
+            citizen_father_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.father_name
+              : groomInfo.father_name,
             citizen_father_nid: 0,
-            citizen_mother_name: groomInfo.mother_name,
+            citizen_mother_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.mother_name
+              : groomInfo.mother_name,
             citizen_mother_nid: 0,
           });
           console.log("citPOPOPOPOPO", result);
@@ -710,39 +746,69 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
             ref_id: citizen_table_id,
             address_type: "present",
             address_for: userType === "G" ? "G" : "B",
-            division_id: groomInfo.division_id,
-            district_id: groomInfo.district_id,
-            upazila_city_id: groomInfo.upazila_id,
-            union_thana_pur_id: groomInfo.union_id,
+            division_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.division_id
+              : groomInfo.division_id,
+            district_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.district_id
+              : groomInfo.district_id,
+            upazila_city_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.upazila_id
+              : groomInfo.upazila_id,
+            union_thana_pur_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.union_id
+              : groomInfo.union_id,
             postal_id: 0,
             word: "W",
             status: "N",
-            address_details: groomInfo.details_address,
+            address_details: payloadFromMarriageInof
+              ? payloadFromMarriageInof.details_address
+              : groomInfo.details_address,
           };
           console.log("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", payloadwwww);
           const result = await axios.post(addressCreateUrl, {
             ref_id: citizen_table_id,
             address_type: "present",
             address_for: userType === "G" ? "G" : "B",
-            division_id: groomInfo.division_id,
-            district_id: groomInfo.district_id,
-            upazila_city_id: groomInfo.upazila_id,
-            union_thana_pur_id: groomInfo.union_id,
+            division_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.division_id
+              : groomInfo.division_id,
+            district_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.district_id
+              : groomInfo.district_id,
+            upazila_city_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.upazila_id
+              : groomInfo.upazila_id,
+            union_thana_pur_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.union_id
+              : groomInfo.union_id,
             postal_id: 0,
             word: "W",
             status: "N",
-            address_details: groomInfo.details_address,
+            address_details: payloadFromMarriageInof
+              ? payloadFromMarriageInof.details_address
+              : groomInfo.details_address,
           });
           console.log("addresssssPOPOPOPO", result);
         } else {
           const result = await axios.put(addressUpdateUrl, {
-            division_id: groomInfo.division_id,
-            district_id: groomInfo.district_id,
-            upazila_city_id: groomInfo.upazila_id,
-            union_thana_pur_id: groomInfo.union_id,
+            division_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.division_id
+              : groomInfo.division_id,
+            district_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.district_id
+              : groomInfo.district_id,
+            upazila_city_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.upazila_id
+              : groomInfo.upazila_id,
+            union_thana_pur_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.union_id
+              : groomInfo.union_id,
             postal_id: 0,
             word: 10,
-            address_details: groomInfo.details_address,
+            address_details: payloadFromMarriageInof
+              ? payloadFromMarriageInof.details_address
+              : groomInfo.details_address,
             ref_id: citizen_table_id,
             address_type: "present",
           });
@@ -753,25 +819,45 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
             ref_id: citizen_table_id,
             address_type: "permanent",
             address_for: userType === "G" ? "G" : "B",
-            division_id: groomInfo.per_division_id,
-            district_id: groomInfo.per_district_id,
-            upazila_city_id: groomInfo.per_upazila_id,
-            union_thana_pur_id: groomInfo.per_union_id,
+            division_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_division_id
+              : groomInfo.per_division_id,
+            district_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_district_id
+              : groomInfo.per_district_id,
+            upazila_city_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_upazila_id
+              : groomInfo.per_upazila_id,
+            union_thana_pur_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_union_id
+              : groomInfo.per_union_id,
             postal_id: 0,
             word: "W",
             status: "N",
-            address_details: groomInfo.per_details_address,
+            address_details: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_details_address
+              : groomInfo.per_details_address,
           });
           console.log("addresssssPOPOPOPO", result);
         } else {
           const result = await axios.put(addressUpdateUrl, {
-            division_id: groomInfo.per_division_id,
-            district_id: groomInfo.per_district_id,
-            upazila_city_id: groomInfo.per_upazila_id,
-            union_thana_pur_id: groomInfo.per_union_id,
+            division_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_division_id
+              : groomInfo.per_division_id,
+            district_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_district_id
+              : groomInfo.per_district_id,
+            upazila_city_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_upazila_id
+              : groomInfo.per_upazila_id,
+            union_thana_pur_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_union_id
+              : groomInfo.per_union_id,
             postal_id: 0,
             word: 10,
-            address_details: groomInfo.per_details_address,
+            address_details: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_details_address
+              : groomInfo.per_details_address,
             ref_id: citizen_table_id,
             address_type: "permanent",
           });
@@ -781,37 +867,73 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
         let brideGroomAllInfoPayload = {
           citizenInfo: {
             citizen_doc_type: "NID",
-            citizen_doc_no: groomInfo.nid,
+            citizen_doc_no: payloadFromMarriageInof
+              ? payloadFromMarriageInof.nid
+              : groomInfo.nid,
 
-            citizen_name: groomInfo.name,
-            citizen_dob: groomInfo.dob,
-            citizen_mobile: groomInfo.mobile_no,
-            citizen_email: groomInfo.email,
-            citizen_religion: groomInfo.relegion,
-            citizen_father_name: groomInfo.father_name,
+            citizen_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.name
+              : groomInfo.name,
+            citizen_dob: payloadFromMarriageInof
+              ? payloadFromMarriageInof.dob
+              : groomInfo.dob,
+            citizen_mobile: payloadFromMarriageInof
+              ? payloadFromMarriageInof.mobile_no
+              : groomInfo.mobile_no,
+            citizen_email: payloadFromMarriageInof
+              ? payloadFromMarriageInof.email
+              : groomInfo.email,
+            citizen_religion: payloadFromMarriageInof
+              ? payloadFromMarriageInof.relegion
+              : groomInfo.relegion,
+            citizen_father_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.father_name
+              : groomInfo.father_name,
             citizen_father_nid: 0,
-            citizen_mother_name: groomInfo.mother_name,
+            citizen_mother_name: payloadFromMarriageInof
+              ? payloadFromMarriageInof.mother_name
+              : groomInfo.mother_name,
             citizen_mother_nid: 0,
           },
           presentAdress: {
             address_type: "present",
             address_for: userType === "G" ? "G" : "B",
-            division_id: groomInfo.division_id,
-            district_id: groomInfo.district_id,
-            upazila_city_id: groomInfo.upazila_id,
-            union_thana_pur_id: groomInfo.union_id,
+            division_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.division_id
+              : groomInfo.division_id,
+            district_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.district_id
+              : groomInfo.district_id,
+            upazila_city_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.upazila_id
+              : groomInfo.upazila_id,
+            union_thana_pur_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.union_id
+              : groomInfo.union_id,
             postal_id: 0,
-            address_details: groomInfo.details_address,
+            address_details: payloadFromMarriageInof
+              ? payloadFromMarriageInof.details_address
+              : groomInfo.details_address,
           },
           permanentAdress: {
             address_type: "permanent",
             address_for: userType === "G" ? "G" : "B",
-            division_id: groomInfo.per_division_id,
-            district_id: groomInfo.per_district_id,
-            upazila_city_id: groomInfo.per_upazila_id,
-            union_thana_pur_id: groomInfo.per_union_id,
+            division_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_division_id
+              : groomInfo.per_division_id,
+            district_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_district_id
+              : groomInfo.per_district_id,
+            upazila_city_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_upazila_id
+              : groomInfo.per_upazila_id,
+            union_thana_pur_id: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_union_id
+              : groomInfo.per_union_id,
             postal_id: 0,
-            address_details: groomInfo.per_details_address,
+            address_details: payloadFromMarriageInof
+              ? payloadFromMarriageInof.per_details_address
+              : groomInfo.per_details_address,
           },
         };
         console.log("সংরক্ষণ করুন");
@@ -1017,6 +1139,7 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     handleOnSubmitPic,
     handleOnSubmitLeftFP,
     onImageConfirm,
+    goomPicSubmit,
   };
 
   return children(
@@ -1029,7 +1152,10 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     data,
     groomPic,
     groomPicture,
-    picOpenCloseLefRightFunction
+    picOpenCloseLefRightFunction,
+    goomPicSubmit,
+    fingerVerify,
+    LeftFP
   );
 };
 

@@ -16,7 +16,13 @@ const index = () => {
             groomGetUserById,
             onFetchNidData,
             formError,
-            dataFromBackend
+            dataFromBackend,
+            picState,
+            onImageSelect,
+            picOpenCloseLefRightFunction,
+            goomPicSubmit,
+            fingerVerify,
+            LeftFP
           ) => (
             <MarriageInformation groomInfo={groomState} onSubmit={onSubmit} />
           )}

@@ -43,7 +43,7 @@ import LawyerFatherAndWitness from "../lawyer-witness/Lawyer_Witness";
 import BasicMarriageInformation from "./BasicMarriageInformation";
 import Breadcrumb from "../../shared/others/breadcrumbs";
 // import { bridesBasicInfo } from "../../../url/ApiList";
-
+import BrideGroomAndMarriageInfoRenderProps from "../groom/BrideGroomAndMarriageInfoRenderProps";
 // ------------ Stepper Steps -------------
 const steps = [
   "বরের তথ্যাদি",
@@ -51,22 +51,6 @@ const steps = [
   "বিবাহের তথ্য",
   "উকিল ও সাক্ষীর তথ্যাদি",
 ];
-
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <Groom title={"MarriageInfo"} />;
-    case 1:
-      return <Bride title={"MarriageInfo"} />;
-    case 2:
-      return <BasicMarriageInformation />;
-    case 3:
-      return <LawyerFatherAndWitness />;
-
-    default:
-      throw new Error("Unknown step");
-  }
-}
 
 const bearer = (data) => {};
 
@@ -162,6 +146,91 @@ const FinalStep = (props) => {
 };
 
 const MarriageInformation = (props) => {
+  function getStepContent(step) {
+    switch (step) {
+      case 0:
+        return (
+          <BrideGroomAndMarriageInfoRenderProps title="G">
+            {(
+              groomState,
+              groomHandleChange,
+              onSubmit,
+              groomGetUserById,
+              onFetchNidData,
+              formError,
+              dataFromBackend,
+              picState,
+              onImageSelect,
+              picOpenCloseLefRightFunction,
+              goomPicSubmit,
+              fingerVerify,
+              LeftFP
+            ) => (
+              <Groom
+                groomInfo={groomState}
+                onChange={groomHandleChange}
+                onSubmit={onSubmit}
+                getUserById={groomGetUserById}
+                title="G"
+                onFetchNidData={onFetchNidData}
+                formError={formError}
+                data={dataFromBackend}
+                picState={picState}
+                picOpenCloseLefRightFunction={picOpenCloseLefRightFunction}
+                onImageSelect={onImageSelect}
+                goomPicSubmit={goomPicSubmit}
+                fingerVerify={fingerVerify}
+                LeftFP={LeftFP}
+              />
+            )}
+          </BrideGroomAndMarriageInfoRenderProps>
+        );
+      case 1:
+        return (
+          <BrideGroomAndMarriageInfoRenderProps title="B">
+            {(
+              groomState,
+              groomHandleChange,
+              onSubmit,
+              groomGetUserById,
+              onFetchNidData,
+              formError,
+              dataFromBackend,
+              picState,
+              onImageSelect,
+              picOpenCloseLefRightFunction,
+              goomPicSubmit,
+              fingerVerify,
+              LeftFP
+            ) => (
+              <Bride
+                groomInfo={groomState}
+                onChange={groomHandleChange}
+                onSubmit={onSubmit}
+                getUserById={groomGetUserById}
+                title="B"
+                onFetchNidData={onFetchNidData}
+                formError={formError}
+                data={dataFromBackend}
+                picState={picState}
+                picOpenCloseLefRightFunction={picOpenCloseLefRightFunction}
+                onImageSelect={onImageSelect}
+                goomPicSubmit={goomPicSubmit}
+                fingerVerify={fingerVerify}
+                LeftFP={LeftFP}
+              />
+            )}
+          </BrideGroomAndMarriageInfoRenderProps>
+        );
+      case 2:
+        return <BasicMarriageInformation />;
+      case 3:
+        return <LawyerFatherAndWitness />;
+
+      default:
+        throw new Error("Unknown step");
+    }
+  }
   console.log("groooooooooooooomInfooooo", props.groomInfo);
   const groomDispatch = useDispatch();
   // const [law_father_info, setLawFatherInof] = React.useState({});
@@ -180,17 +249,17 @@ const MarriageInformation = (props) => {
 
   const handleNext = async () => {
     // console.log("methodddddddofffffkaaaaziiii", bridePayload.method_of_kazi);
-    console.log("groompayloadddddddd", bridePayload);
+    console.log("groooooooooooooomInfooooo", props.groomInfo);
     // groomDispatch(RegisterGroom(groomPayload));
     // console.log("bridePayloadddddddd", bridePayload);
     setActiveStep(activeStep + 1);
     if (activeStep === 0) {
       console.log("step0", props.groomInfo);
 
-      props.onSubmit(undefined, "G");
+      props.onSubmit(undefined, "G", props.groomInfo);
     }
     if (activeStep === 1) {
-      props.onSubmit(undefined, "B");
+      props.onSubmit(undefined, "B", pr);
     }
     if (activeStep === 2) {
       console.log("mrg_payloaddddd", mrgInfoPayload);
