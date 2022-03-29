@@ -1,0 +1,46 @@
+{
+  "fields": [
+    {
+      "label": "বিভাগ",
+      "name": "division_id",
+      "type": "division"
+    },
+    {
+      "label": "জেলা",
+      "name": "district_id",
+      "type": "district"
+    },
+    {
+      "label": "উপজেলা/সিটি কর্পোরেশন",
+      "name": "upazila_id",
+      "type": "cityCorp"
+    },
+    {
+      "label": "ইউনিয়ন/পৌরসভা/থানা",
+      "name": "union_id",
+      "type": "uni-thana-paurasabha"
+    }
+  ],
+  "fields2": [
+    {
+      "label": "বিভাগ",
+      "name": "per_division_id",
+      "type": "division"
+    },
+    {
+      "label": "জেলা",
+      "name": "per_district_id",
+      "type": "district"
+    },
+    {
+      "label": "উপজেলা/সিটি কর্পোরেশন",
+      "name": "per_upazila_id",
+      "type": "cityCorp"
+    },
+    {
+      "label": "ইউনিয়ন/পৌরসভা/থানা",
+      "name": "per_union_id",
+      "type": "uni-thana-paurasabha"
+    }
+  ]
+}
