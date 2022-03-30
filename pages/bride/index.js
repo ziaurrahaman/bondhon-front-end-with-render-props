@@ -22,11 +22,22 @@ const index = () => {
             formError,
             dataFromBackend,
             picState,
-            onImageSelect,
+            groomPicture,
             picOpenCloseLefRightFunction,
             goomPicSubmit,
             fingerVerify,
-            LeftFP
+            LeftFP,
+            picOpenRightLeftCameraFlagIForImage,
+            marriageInfo,
+            formErrorsMrg,
+            hadnleChangeMrg,
+            onSubmitDataMrg,
+            performDevorcePermissionDevorcyFilesAlimonyStateObjMrg,
+            marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg,
+            checkFormErrorMrg,
+            handleAddDeleteObjMrg,
+            devorceConOnChagneMrg,
+            khorposhOnchangeMrg
           ) => (
             <Bride
               groomInfo={groomState}
@@ -39,10 +50,27 @@ const index = () => {
               data={dataFromBackend}
               picState={picState}
               picOpenCloseLefRightFunction={picOpenCloseLefRightFunction}
-              onImageSelect={onImageSelect}
+              groomPicture={groomPicture}
               goomPicSubmit={goomPicSubmit}
               fingerVerify={fingerVerify}
               LeftFP={LeftFP}
+              picOpenRightLeftCameraFlagIForImage={
+                picOpenRightLeftCameraFlagIForImage
+              }
+              marriageInfo={marriageInfo}
+              formErrorsMrg={formErrorsMrg}
+              hadnleChangeMrg={hadnleChangeMrg}
+              onSubmitDataMrg={onSubmitDataMrg}
+              performDevorcePermissionDevorcyFilesAlimonyStateObjMrg={
+                performDevorcePermissionDevorcyFilesAlimonyStateObjMrg
+              }
+              marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg={
+                marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg
+              }
+              checkFormErrorMrg={checkFormErrorMrg}
+              handleAddDeleteObjMrg={handleAddDeleteObjMrg}
+              devorceConOnChagneMrg={devorceConOnChagneMrg}
+              khorposhOnchangeMrg={khorposhOnchangeMrg}
             />
           )}
         </BrideGroomAndMarriageInfoRenderProps>

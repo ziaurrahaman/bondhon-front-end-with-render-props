@@ -18,13 +18,56 @@ const index = () => {
             formError,
             dataFromBackend,
             picState,
-            onImageSelect,
+            groomPicture,
             picOpenCloseLefRightFunction,
             goomPicSubmit,
             fingerVerify,
-            LeftFP
+            LeftFP,
+            picOpenRightLeftCameraFlagIForImage,
+            marriageInfo,
+            formErrorsMrg,
+            hadnleChangeMrg,
+            onSubmitDataMrg,
+            performDevorcePermissionDevorcyFilesAlimonyStateObjMrg,
+            marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg,
+            checkFormErrorMrg,
+            handleAddDeleteObjMrg,
+            devorceConOnChagneMrg,
+            khorposhOnchangeMrg
           ) => (
-            <MarriageInformation groomInfo={groomState} onSubmit={onSubmit} />
+            <MarriageInformation
+              groomInfo={groomState}
+              onChange={groomHandleChange}
+              onSubmit={onSubmit}
+              getUserById={groomGetUserById}
+              title="G"
+              onFetchNidData={onFetchNidData}
+              formError={formError}
+              data={dataFromBackend}
+              picState={picState}
+              picOpenCloseLefRightFunction={picOpenCloseLefRightFunction}
+              groomPicture={groomPicture}
+              goomPicSubmit={goomPicSubmit}
+              fingerVerify={fingerVerify}
+              LeftFP={LeftFP}
+              picOpenRightLeftCameraFlagIForImage={
+                picOpenRightLeftCameraFlagIForImage
+              }
+              marriageInfo={marriageInfo}
+              formErrorsMrg={formErrorsMrg}
+              hadnleChangeMrg={hadnleChangeMrg}
+              onSubmitDataMrg={onSubmitDataMrg}
+              performDevorcePermissionDevorcyFilesAlimonyStateObjMrg={
+                performDevorcePermissionDevorcyFilesAlimonyStateObjMrg
+              }
+              marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg={
+                marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg
+              }
+              checkFormErrorMrg={checkFormErrorMrg}
+              handleAddDeleteObjMrg={handleAddDeleteObjMrg}
+              devorceConOnChagneMrg={devorceConOnChagneMrg}
+              khorposhOnchangeMrg={khorposhOnchangeMrg}
+            />
           )}
         </BrideGroomAndMarriageInfoRenderProps>
       </LandingLayout>

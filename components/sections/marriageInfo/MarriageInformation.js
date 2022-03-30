@@ -44,6 +44,8 @@ import BasicMarriageInformation from "./BasicMarriageInformation";
 import Breadcrumb from "../../shared/others/breadcrumbs";
 // import { bridesBasicInfo } from "../../../url/ApiList";
 import BrideGroomAndMarriageInfoRenderProps from "../groom/BrideGroomAndMarriageInfoRenderProps";
+import BasicMarriageInfoRenderProps from "./BasicMarriageInfoRenderProps";
+import { PortraitSharp } from "@mui/icons-material";
 // ------------ Stepper Steps -------------
 const steps = [
   "বরের তথ্যাদি",
@@ -146,84 +148,78 @@ const FinalStep = (props) => {
 };
 
 const MarriageInformation = (props) => {
+  console.log("groooooooooooooomInfooooo", props.groomInfo);
   function getStepContent(step) {
     switch (step) {
       case 0:
         return (
-          <BrideGroomAndMarriageInfoRenderProps title="G">
-            {(
-              groomState,
-              groomHandleChange,
-              onSubmit,
-              groomGetUserById,
-              onFetchNidData,
-              formError,
-              dataFromBackend,
-              picState,
-              onImageSelect,
-              picOpenCloseLefRightFunction,
-              goomPicSubmit,
-              fingerVerify,
-              LeftFP
-            ) => (
-              <Groom
-                groomInfo={groomState}
-                onChange={groomHandleChange}
-                onSubmit={onSubmit}
-                getUserById={groomGetUserById}
-                title="G"
-                onFetchNidData={onFetchNidData}
-                formError={formError}
-                data={dataFromBackend}
-                picState={picState}
-                picOpenCloseLefRightFunction={picOpenCloseLefRightFunction}
-                onImageSelect={onImageSelect}
-                goomPicSubmit={goomPicSubmit}
-                fingerVerify={fingerVerify}
-                LeftFP={LeftFP}
-              />
-            )}
-          </BrideGroomAndMarriageInfoRenderProps>
+          <Groom
+            groomInfo={props.groomInfo}
+            onChange={props.onChange}
+            onSubmit={props.onSubmit}
+            getUserById={() => {
+              props.getUserById("MarriageInfo");
+            }}
+            title="MarriageInfo"
+            onFetchNidData={props.onFetchNidData}
+            formError={props.formError}
+            data={props.data}
+            picState={props.picState}
+            picOpenCloseLefRightFunction={props.picOpenCloseLefRightFunction}
+            groomPicture={props.groomPicture}
+            goomPicSubmit={props.goomPicSubmit}
+            fingerVerify={props.fingerVerify}
+            LeftFP={props.LeftFP}
+            picOpenRightLeftCameraFlagIForImage={
+              props.picOpenRightLeftCameraFlagIForImage
+            }
+          />
         );
+
       case 1:
         return (
-          <BrideGroomAndMarriageInfoRenderProps title="B">
-            {(
-              groomState,
-              groomHandleChange,
-              onSubmit,
-              groomGetUserById,
-              onFetchNidData,
-              formError,
-              dataFromBackend,
-              picState,
-              onImageSelect,
-              picOpenCloseLefRightFunction,
-              goomPicSubmit,
-              fingerVerify,
-              LeftFP
-            ) => (
-              <Bride
-                groomInfo={groomState}
-                onChange={groomHandleChange}
-                onSubmit={onSubmit}
-                getUserById={groomGetUserById}
-                title="B"
-                onFetchNidData={onFetchNidData}
-                formError={formError}
-                data={dataFromBackend}
-                picState={picState}
-                picOpenCloseLefRightFunction={picOpenCloseLefRightFunction}
-                onImageSelect={onImageSelect}
-                goomPicSubmit={goomPicSubmit}
-                fingerVerify={fingerVerify}
-                LeftFP={LeftFP}
-              />
-            )}
-          </BrideGroomAndMarriageInfoRenderProps>
+          <Bride
+            groomInfo={props.groomInfo}
+            onChange={props.onChange}
+            onSubmit={props.onSubmit}
+            getUserById={() => {
+              props.getUserById("MarriageInfo");
+            }}
+            title="MarriageInfo"
+            onFetchNidData={props.onFetchNidData}
+            formError={props.formError}
+            data={props.data}
+            picState={props.picState}
+            picOpenCloseLefRightFunction={props.picOpenCloseLefRightFunction}
+            groomPicture={props.groomPicture}
+            goomPicSubmit={props.goomPicSubmit}
+            fingerVerify={props.fingerVerify}
+            LeftFP={props.LeftFP}
+            picOpenRightLeftCameraFlagIForImage={
+              props.picOpenRightLeftCameraFlagIForImage
+            }
+          />
         );
       case 2:
-        return <BasicMarriageInformation />;
+        return (
+          <BasicMarriageInformation
+            marriageInfo={props.marriageInfo}
+            formErrorsMrg={props.formErrorsMrg}
+            hadnleChangeMrg={props.hadnleChangeMrg}
+            onSubmitDataMrg={props.onSubmitDataMrg}
+            performDevorcePermissionDevorcyFilesAlimonyStateObjMrg={
+              props.performDevorcePermissionDevorcyFilesAlimonyStateObjMrg
+            }
+            marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg={
+              props.marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg
+            }
+            checkFormErrorMrg={props.checkFormErrorMrg}
+            handleAddDeleteObjMrg={props.handleAddDeleteObjMrg}
+            devorceConOnChagneMrg={props.devorceConOnChagneMrg}
+            khorposhOnchangeMrg={props.khorposhOnchangeMrg}
+          />
+        );
+
       case 3:
         return <LawyerFatherAndWitness />;
 
@@ -231,7 +227,7 @@ const MarriageInformation = (props) => {
         throw new Error("Unknown step");
     }
   }
-  console.log("groooooooooooooomInfooooo", props.groomInfo);
+
   const groomDispatch = useDispatch();
   // const [law_father_info, setLawFatherInof] = React.useState({});
   const [activeStep, setActiveStep] = React.useState(0);
@@ -259,169 +255,10 @@ const MarriageInformation = (props) => {
       props.onSubmit(undefined, "G", props.groomInfo);
     }
     if (activeStep === 1) {
-      props.onSubmit(undefined, "B", pr);
+      props.onSubmit(undefined, "B", props.groomInfo);
     }
     if (activeStep === 2) {
-      console.log("mrg_payloaddddd", mrgInfoPayload);
-
-      const uniqueCheck = await axios.get(
-        marriageInofUniqueCheckUrl + bridePayload.nid + "/" + groomPayload.nid
-      );
-      console.log("mrginfoUniquerdReslut", uniqueCheck);
-      console.log(
-        "mrginfoUniquerdReslutUrlllll",
-        marriageInofUniqueCheckUrl + bridePayload.nid + "/" + groomPayload.nid
-      );
-      if (uniqueCheck.data.data.mrg_info_count === 0) {
-        let payload = {
-          marriage_info: {
-            bride_id: bridePayload.nid,
-            groom_id: groomPayload.nid,
-            status: "M",
-            nikahnama_no: Math.floor(100000 + Math.random() * 900000),
-            sonod_no: Math.floor(100000 + Math.random() * 900000),
-          },
-          marriage_special_info: {
-            marriage_fixed_date: mrgInfoPayload.marriage_fixed_date,
-            marriage_date: mrgInfoPayload.marriage_date,
-            marriage_reg_date: mrgInfoPayload.marriage_reg_date,
-            denmohor: Number(mrgInfoPayload.denmohor),
-            denmohor_status: "P",
-            muajjol: Number(mrgInfoPayload.muajjol),
-            muajjil: Number(mrgInfoPayload.muajjil),
-            paid_denmohor_amount: Number(mrgInfoPayload.paid_denmohor_amount),
-            special_info: "D",
-            special_info_for: "B",
-            special_info_type: "D",
-            divorce_con: mrgInfoPayload.divorce_con,
-            alimony_con: mrgInfoPayload.alimony_con,
-            permission_no: Number(mrgInfoPayload.permission_no),
-            permission_date:
-              mrgInfoPayload.permission_date === ""
-                ? "2022-5-5"
-                : mrgInfoPayload.permission_date,
-            status: "D",
-          },
-        };
-        console.log("marriagePayload", payload);
-        try {
-          const marriageBasicDataResult = await axios.post(
-            marriageInfoBasicInfoUrl,
-            payload
-          );
-          mrg_Id = marriageBasicDataResult.data.data.mrg_info_id;
-          localStorage.setItem(
-            "nikahnama_no_id",
-            marriageBasicDataResult.data.data.mrg_info_id
-          );
-
-          const marriageInfoTablePrimaryKey =
-            marriageBasicDataResult.data.data.mrg_info_id;
-          const specialMarriageInfoId =
-            marriageBasicDataResult.data.data.mrg_special_id;
-          localStorage.setItem("mrg_info_id", marriageInfoTablePrimaryKey);
-          localStorage.setItem("mrg_special_id", specialMarriageInfoId);
-          console.log("marriageBasicDataResult", marriageBasicDataResult);
-
-          NotificationManager.success("সফলভাবে ডেটা সংরক্ষণ করা হয়েছে");
-
-          //router.push({ pathname: "/coop/income-expense" });
-        } catch (error) {
-          if (error.response) {
-            let message = error.response.data.errors[0].message;
-            NotificationManager.error(message, "ত্রুটি পাওয়া গেছে", 5000);
-          } else if (error.request) {
-            NotificationManager.error(
-              "সংযোগ ত্রুটি পাওয়া গেছে..",
-              "Error",
-              5000
-            );
-          } else if (error) {
-            // NotificationManager.error(error.toString(), "Error", 5000);
-          }
-        }
-      } else {
-        let payload = {
-          marriage_info: {
-            marriage_id: uniqueCheck.data.data.mrg_info_id,
-            bride_id: bridePayload.nid,
-            groom_id: groomPayload.nid,
-            status: "M",
-          },
-          marriage_special_info: {
-            id: uniqueCheck.data.data.mrg_special_id,
-            marriage_fixed_date: mrgInfoPayload.marriage_fixed_date,
-            marriage_date: mrgInfoPayload.marriage_date,
-            marriage_reg_date: mrgInfoPayload.marriage_reg_date,
-            denmohor: Number(mrgInfoPayload.denmohor),
-            denmohor_status: "P",
-            muajjol: Number(mrgInfoPayload.muajjol),
-            muajjil: Number(mrgInfoPayload.muajjil),
-            paid_denmohor_amount: Number(mrgInfoPayload.paid_denmohor_amount),
-            special_info: "D",
-            special_info_for: "B",
-            special_info_type: "D",
-            divorce_con: mrgInfoPayload.divorce_con,
-            alimony_con: mrgInfoPayload.alimony_con,
-            permission_no: Number(mrgInfoPayload.permission_no),
-            permission_date:
-              mrgInfoPayload.permission_date === ""
-                ? "2022-5-5"
-                : mrgInfoPayload.permission_date,
-            status: "D",
-          },
-        };
-        // console.log("marriagePayloaduppppppp", payload);
-        try {
-          const marriageBasicDataResult = await axios.put(
-            marriageAndSpecialMarriageInfoUpdateUrl,
-            payload
-          );
-
-          const marriageInfoTablePrimaryKey =
-            marriageBasicDataResult.data.data.mrg_info_id;
-          const specialMarriageInfoId =
-            marriageBasicDataResult.data.data.mrg_special_id;
-
-          // console.log(
-          //   "marriageBasicDataResultupppppp",
-          //   marriageBasicDataResult
-          // );
-
-          NotificationManager.success("সফলভাবে ডেটা সংরক্ষণ করা হয়েছে");
-
-          //router.push({ pathname: "/coop/income-expense" });
-        } catch (error) {
-          if (error.response) {
-            let message = error.response.data.errors[0].message;
-            NotificationManager.error(message, "ত্রুটি পাওয়া গেছে", 5000);
-          } else if (error.request) {
-            NotificationManager.error(
-              "সংযোগ ত্রুটি পাওয়া গেছে..",
-              "Error",
-              5000
-            );
-          } else if (error) {
-            // NotificationManager.error(error.toString(), "Error", 5000);
-          }
-        }
-      }
-      // "marriage_fixed_date":"2022-5-5",
-      // "marriage_date":"2022-5-5",
-      // "marriage_reg_date":"2022-5-5",
-      // "denmohor":123456,
-      // "denmohor_status":"P",
-      // "muajjol":123,
-      // "muajjil":456,
-      // "paid_denmohor_amount":1234,
-      // "special_info":"D",
-      // "special_info_for":"B",
-      // "special_info_type":"D",
-      // "divorce_con":"test",
-      // "alimony_con":"test",
-      // "permission_no":7458745,
-      // "permission_date":"2022-5-5",
-      // "status":"D"
+      props.onSubmitDataMrg();
     }
     if (activeStep === 3) {
       console.log("layyyyyyyy", lawyerWitnessInfo);

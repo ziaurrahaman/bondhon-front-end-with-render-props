@@ -26,24 +26,13 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
 
-import AddressDetails from "../../shared/others/addressDetails";
 import Title from "../../shared/others/HeadTitle";
 import Capture from "../camera/Capture";
 import axios from "axios";
 
-import {
-  fingerSdkApi,
-  livenessDetectionApi,
-  faceMatchingApi,
-  getDocumentUrlDummy,
-} from "../../../url/ApiList";
-
-import { NotificationManager } from "react-notifications";
 import AllFormContext from "../../shared/others/zone_form_context.json";
 import ZoneComponent from "../../shared/others/ZoneComponent";
-import { propsToClassKey } from "@mui/styles";
 
 const style = {
   position: "absolute",
@@ -79,23 +68,17 @@ const rows = [
   ),
 ];
 
-const Bride = (props) => {
+const Groom = (props) => {
   const [dataType, setDataType] = useState("nid");
 
   const handleDataType = (e) => {
     setDataType(e.target.value);
   };
 
-  console.log("dataType=================", dataType);
-
-  const [openPic, setOpenPic] = useState(false);
-  const [openRight, setOpenRight] = useState(false);
-  const [openLeft, setOpenLeft] = useState(false);
-  const [openCamera, setOpenCamera] = useState(false);
+  console.log("dataType=================", props.groomInfo);
 
   const [allFormContext, setAllFormContext] = useState([]);
   const [allFormContext2, setAllFormContext2] = useState([]);
-  const groomPayload = useSelector((state) => state.groomReg);
 
   function giveValueToTextField(index) {
     const ids = [
@@ -119,6 +102,7 @@ const Bride = (props) => {
   }
 
   const ImageModalRegion = () => {
+    console.log("GroomImageeee", props.picState.groomImage);
     return (
       <>
         <Grid sm={12} md={12} xs={12}>
@@ -135,8 +119,9 @@ const Bride = (props) => {
               <Image
                 src={
                   props.picState.groomImage
-                    ? flagForImage + props.picState.groomImage
-                    : "/groom.png"
+                    ? props.picOpenRightLeftCameraFlagIForImage.flagForImage +
+                      props.picState.groomImage
+                    : "/bride.png"
                 }
                 alt="Bride Picture"
                 width={160}
@@ -162,7 +147,7 @@ const Bride = (props) => {
                 variant="outlined"
                 type="file"
                 focused
-                onChange={props.onImageSelect}
+                onChange={props.groomPicture}
                 onClick={(event) => (event.target.value = null)}
               />
             </Grid>
@@ -335,8 +320,12 @@ const Bride = (props) => {
                               fullWidth
                               size="small"
                               variant="outlined"
-                              onChange={props.onChange}
-                              onKeyUp={props.onFetchNidData}
+                              onChange={(e) => {
+                                props.onChange(e, "B");
+                              }}
+                              onKeyUp={(e) => {
+                                props.onFetchNidData(e, "B");
+                              }}
                               value={props.groomInfo.nid}
                               InputProps={{
                                 startAdornment: (
@@ -365,7 +354,9 @@ const Bride = (props) => {
                             fullWidth
                             size="small"
                             type="date"
-                            onChange={props.onChange}
+                            onChange={(e) => {
+                              props.onChange(e, "B");
+                            }}
                             // defaultValue="2021-12-27"
                             value={props.groomInfo.dob}
                             InputLabelProps={{
@@ -672,7 +663,8 @@ const Bride = (props) => {
                         }
                         src={
                           props.goomPicSubmit.groomImage
-                            ? flagForImage + props.groomPic.groomImage
+                            ? props.picOpenRightLeftCameraFlagIForImage
+                                .flagForImage + props.goomPicSubmit.groomImage
                             : "/bride.png"
                         }
                         alt="Bride Picture"
@@ -683,10 +675,8 @@ const Bride = (props) => {
                   )}
 
                   <Modal
-                    open={props.picOpenCloseLefRightFunction.openPic}
-                    onClose={
-                      props.picOpenCloseLefRightFunction.ButtonhandleClosePic
-                    }
+                    open={props.picOpenRightLeftCameraFlagIForImage.openPic}
+                    onClose={props.picOpenCloseLefRightFunction.handleClosePic}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                   >
@@ -747,7 +737,7 @@ const Bride = (props) => {
                     </Grid>
                   )}
                   <Modal
-                    open={props.picOpenCloseLefRightFunction.openLeft}
+                    open={props.picOpenRightLeftCameraFlagIForImage.openLeft}
                     onClose={props.picOpenCloseLefRightFunction.handleCloseLeft}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
@@ -776,7 +766,9 @@ const Bride = (props) => {
                   </Modal>
                   <Grid sm={12} md={12} xs={12}>
                     <Modal
-                      open={props.picOpenCloseLefRightFunction.openCamera}
+                      open={
+                        props.picOpenRightLeftCameraFlagIForImage.openCamera
+                      }
                       onClose={
                         props.picOpenCloseLefRightFunction.handleCloseCamera
                       }
@@ -839,4 +831,4 @@ const Bride = (props) => {
   );
 };
 
-export default Bride;
+export default Groom;

@@ -50,6 +50,9 @@ import {
   postDocumentUploadUrlDummy,
   getDocumentUrl,
   getDocumentUrlDummy,
+  marriageInofUniqueCheckUrl,
+  marriageInfoBasicInfoUrl,
+  marriageAndSpecialMarriageInfoUpdateUrl,
 } from "../../../url/ApiList";
 import { BrideOrGroomAllInfoGetUrl } from "../../../url/ApiList";
 import { NotificationManager } from "react-notifications";
@@ -90,6 +93,7 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
   });
   //Groom Pic Function
   const handleOpenFinger = async (e) => {
+    console.log("Hi I am hereeeeeeeeeee");
     const fingerobj = {
       MinQ: 30,
       Retry: 3,
@@ -97,7 +101,7 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     };
     try {
       const getFingerData = await axios.post(fingerSdkApi, fingerobj);
-      console.log(getFingerData);
+      console.log("FingerDataaaaa", getFingerData);
       if (getFingerData.status === 200) {
         setFingerVerify(true);
       }
@@ -106,7 +110,8 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     }
   };
 
-  let groomPicture = (e) => {
+  const groomPicture = (e) => {
+    console.log("In groom picture");
     if (e.target.files && e.target.files.length > 0) {
       let file = e.target.files[0];
       var reader = new FileReader();
@@ -132,14 +137,14 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     /************* IMAGE API *************** */
     let capturedImage = groomPic.groomImage;
 
-    if (brideInfo.nid === "") {
+    if (groomInfo.nid === "") {
       NotificationManager.error(
         "ছবি ডামি ইসি ডাটাবেসে পাওয়া যায়নি",
         "Title here"
       );
     } else {
       let payloadBase64 = {
-        citizenDocId: brideInfo.nid,
+        citizenDocId: groomInfo.nid,
       };
 
       try {
@@ -297,7 +302,7 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
   );
   const mobileRegex = RegExp(/(^(01){1}[3456789]{1}(\d){8})$/);
   //Handle change of groom
-  const handleChange = (e) => {
+  const hadnleChange = (e, userType) => {
     const { name, value } = e.target;
     switch (name) {
       case "nid":
@@ -306,6 +311,15 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
           //For dynamic key we use []
           [e.target.name]: e.target.value,
         });
+        if (userType) {
+          if (userType === "G") {
+            localStorage.setItem("groomNid", groomInfo.nid);
+          }
+          if (userType === "B") {
+            localStorage.setItem("brideNid", groomInfo.nid);
+          }
+        }
+
         console.log(`brideinfoTest: ${groomInfo}`);
 
         formErrors.nid =
@@ -355,7 +369,12 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
         });
         const age = getAge(e.target.value);
 
-        formErrors.dob = age < 21 && "বরের বয়স ২১ বছর হতে হবে";
+        if (userType === "G") {
+          formErrors.dob = age < 21 && "বরের বয়স ২১ বছর হতে হবে";
+        }
+        if (userType === "B") {
+          formErrors.dob = age < 18 && "বরের বয়স ১৮ বছর হতে হবে";
+        }
         break;
 
       case "relegion":
@@ -525,58 +544,139 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
 
   // getUserById function of Groom
 
-  const getUserInfoById = async () => {
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    if (!userData) {
-      return;
-    }
-    const userId = userData.citizen_doc_no;
-    console.log("userId", userId);
+  const getUserInfoById = async (title) => {
+    if (title === "MarriageInfo") {
+      console.log("Herrrrrrrrrrr");
+      setLeftFP(false);
+      setGoomPicSubmit("");
+      setGroomPic({
+        groomImage: "",
+        mimetypeback: "",
+      });
+      setGroomInfo({
+        nid: "",
+        name: "",
+        dob: "",
+        mobile_no: "",
+        email: "",
+        relegion: "নির্বাচন করুন",
+        father_name: "",
 
-    if (userId && props.title !== "MarriageInfo") {
-      try {
-        const nidData = await axios.get(BrideOrGroomAllInfoGetUrl + userId);
-        const dataa = nidData.data.data;
-        console.log("niddata", dataa);
+        mother_name: "",
 
-        console.log(date);
+        address_type: "",
+        user_type: "",
+        division_id: "নির্বাচন করুন",
+        district_id: "নির্বাচন করুন",
+        upazila_id: "নির্বাচন করুন",
+        union_id: "নির্বাচন করুন",
+        post_code: "নির্বাচন করুন",
+        details_address: "",
+        per_address_type: "",
+        per_user_type: "",
+        per_division_id: "নির্বাচন করুন",
+        per_district_id: "নির্বাচন করুন",
+        per_upazila_id: "নির্বাচন করুন",
+        per_union_id: "নির্বাচন করুন",
+        per_post_code: "নির্বাচন করুন",
+        per_details_address: "",
+      });
 
-        if (dataa !== null) {
-          const date = formatDate(dataa.citizenInfo.citizen_dob);
-          setData(dataa);
-          console.log("data not null", dataa);
-          setGroomInfo({
-            nid: dataa.citizenInfo.citizen_doc_no,
-            name: dataa.citizenInfo.citizen_name,
-            dob: date,
-            mobile_no: dataa.citizenInfo.citizen_mobile,
-            email: dataa.citizenInfo.citizen_email,
-            relegion: dataa.citizenInfo.citizen_religion,
-            father_name: dataa.citizenInfo.citizen_father_name,
+      setFlagForImage("data:image/jpg;base64,");
+    } else {
+      const userData = JSON.parse(localStorage.getItem("userData"));
+      if (!userData) {
+        return;
+      }
+      const userId = userData.citizen_doc_no;
+      console.log("userId", userId);
 
-            mother_name: dataa.citizenInfo.citizen_mother_name,
+      if (userId && props.title !== "MarriageInfo") {
+        try {
+          const nidData = await axios.get(BrideOrGroomAllInfoGetUrl + userId);
+          const dataa = nidData.data.data;
+          console.log("niddata", dataa);
 
-            ...(dataa.presentAdress && {
-              address_type: dataa.presentAdress.address_type,
-              // user_type: "B",
-              division_id: dataa.presentAdress.division_id,
-              district_id: dataa.presentAdress.district_id,
-              upazila_id: dataa.presentAdress.upazila_city_id,
-              union_id: dataa.presentAdress.union_thana_pur_id,
-              post_code: dataa.presentAdress.postal_id,
-              details_address: dataa.presentAdress.address_details,
-              ...(dataa.permanentAdress && {
-                per_address_type: "permanent",
+          console.log(date);
 
-                per_division_id: dataa.permanentAdress.division_id,
-                per_district_id: dataa.permanentAdress.district_id,
-                per_upazila_id: dataa.permanentAdress.upazila_city_id,
-                per_union_id: dataa.permanentAdress.union_thana_pur_id,
-                per_post_code: dataa.permanentAdress.postal_id,
-                per_details_address: dataa.permanentAdress.address_details,
+          if (dataa !== null) {
+            const date = formatDate(dataa.citizenInfo.citizen_dob);
+            setData(dataa);
+            console.log("data not null", dataa);
+            setGroomInfo({
+              nid: dataa.citizenInfo.citizen_doc_no,
+              name: dataa.citizenInfo.citizen_name,
+              dob: date,
+              mobile_no: dataa.citizenInfo.citizen_mobile,
+              email: dataa.citizenInfo.citizen_email,
+              relegion: dataa.citizenInfo.citizen_religion,
+              father_name: dataa.citizenInfo.citizen_father_name,
+
+              mother_name: dataa.citizenInfo.citizen_mother_name,
+
+              ...(dataa.presentAdress && {
+                address_type: dataa.presentAdress.address_type,
+                // user_type: "B",
+                division_id: dataa.presentAdress.division_id,
+                district_id: dataa.presentAdress.district_id,
+                upazila_id: dataa.presentAdress.upazila_city_id,
+                union_id: dataa.presentAdress.union_thana_pur_id,
+                post_code: dataa.presentAdress.postal_id,
+                details_address: dataa.presentAdress.address_details,
+                ...(dataa.permanentAdress && {
+                  per_address_type: "permanent",
+
+                  per_division_id: dataa.permanentAdress.division_id,
+                  per_district_id: dataa.permanentAdress.district_id,
+                  per_upazila_id: dataa.permanentAdress.upazila_city_id,
+                  per_union_id: dataa.permanentAdress.union_thana_pur_id,
+                  per_post_code: dataa.permanentAdress.postal_id,
+                  per_details_address: dataa.permanentAdress.address_details,
+                }),
               }),
-            }),
-            ...(dataa.presentAdress === undefined && {
+              ...(dataa.presentAdress === undefined && {
+                address_type: "",
+                user_type: "",
+                division_id: "নির্বাচন করুন",
+                district_id: "নির্বাচন করুন",
+                upazila_id: "নির্বাচন করুন",
+                union_id: "নির্বাচন করুন",
+                post_code: "নির্বাচন করুন",
+                details_address: "",
+                ...(dataa.permanentAdress === undefined && {
+                  per_address_type: "",
+                  per_user_type: "",
+                  per_division_id: "নির্বাচন করুন",
+                  per_district_id: "নির্বাচন করুন",
+                  per_upazila_id: "নির্বাচন করুন",
+                  per_union_id: "নির্বাচন করুন",
+                  per_post_code: "নির্বাচন করুন",
+                  per_details_address: "",
+                }),
+              }),
+            });
+
+            if (
+              dataa.presentAdress === undefined &&
+              dataa.permanentAdress === undefined
+            ) {
+            } else {
+            }
+          } else {
+            console.log("not nulkl");
+            setData(null);
+            console.log("typypee========", dataType);
+            setGroomInfo({
+              nid: "",
+              name: "",
+              dob: "",
+              mobile_no: "",
+              email: "",
+              relegion: "নির্বাচন করুন",
+              father_name: "",
+
+              mother_name: "",
+
               address_type: "",
               user_type: "",
               division_id: "নির্বাচন করুন",
@@ -585,68 +685,27 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
               union_id: "নির্বাচন করুন",
               post_code: "নির্বাচন করুন",
               details_address: "",
-              ...(dataa.permanentAdress === undefined && {
-                per_address_type: "",
-                per_user_type: "",
-                per_division_id: "নির্বাচন করুন",
-                per_district_id: "নির্বাচন করুন",
-                per_upazila_id: "নির্বাচন করুন",
-                per_union_id: "নির্বাচন করুন",
-                per_post_code: "নির্বাচন করুন",
-                per_details_address: "",
-              }),
-            }),
-          });
-
-          if (
-            dataa.presentAdress === undefined &&
-            dataa.permanentAdress === undefined
-          ) {
-          } else {
+              per_address_type: "",
+              per_user_type: "",
+              per_division_id: "নির্বাচন করুন",
+              per_district_id: "নির্বাচন করুন",
+              per_upazila_id: "নির্বাচন করুন",
+              per_union_id: "নির্বাচন করুন",
+              per_post_code: "নির্বাচন করুন",
+              per_details_address: "",
+            });
           }
-        } else {
-          console.log("not nulkl");
-          setData(null);
-          console.log("typypee========", dataType);
+        } catch (error) {
+          console.log("error", error.response);
           setGroomInfo({
-            nid: "",
+            ...groomInfo,
             name: "",
             dob: "",
-            mobile_no: "",
-            email: "",
-            relegion: "নির্বাচন করুন",
             father_name: "",
-
             mother_name: "",
-
-            address_type: "",
-            user_type: "",
-            division_id: "নির্বাচন করুন",
-            district_id: "নির্বাচন করুন",
-            upazila_id: "নির্বাচন করুন",
-            union_id: "নির্বাচন করুন",
-            post_code: "নির্বাচন করুন",
-            details_address: "",
-            per_address_type: "",
-            per_user_type: "",
-            per_division_id: "নির্বাচন করুন",
-            per_district_id: "নির্বাচন করুন",
-            per_upazila_id: "নির্বাচন করুন",
-            per_union_id: "নির্বাচন করুন",
-            per_post_code: "নির্বাচন করুন",
-            per_details_address: "",
           });
+          setBrideMaritalStatus("");
         }
-      } catch (error) {
-        console.log("error", error.response);
-        setGroomInfo({
-          ...groomInfo,
-          name: "",
-          dob: "",
-          father_name: "",
-          mother_name: "",
-        });
-        setBrideMaritalStatus("");
       }
     }
   };
@@ -996,7 +1055,7 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     return [year, month, day].join("-");
   };
   const [nidDataFatch, setNidDataFatch] = useState();
-  const handlerOnFatchData = async (event) => {
+  const handlerOnFatchData = async (event, userType) => {
     setNidDataFatch(event.target.value);
 
     if (event.key === "Enter") {
@@ -1014,8 +1073,19 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
         if (dataa !== null) {
           const date = formatDate(dataa.citizenInfo.citizen_dob);
           const age = getAge(date);
+          if (userType === "G") {
+            localStorage.setItem("groomNid", groomInfo.nid);
+          }
+          if (userType === "B") {
+            localStorage.setItem("brideNid", groomInfo.nid);
+          }
+          if (userType === "G") {
+            formErrors.dob = age < 21 && "বরের বয়স ২১ বছর হতে হবে";
+          }
+          if (userType === "B") {
+            formErrors.dob = age < 18 && "বরের বয়স ১৮ বছর হতে হবে";
+          }
 
-          formErrors.dob = age < 21 && "বরের বয়স ২১ বছর হতে হবে";
           setData(dataa);
           console.log("data not null", dataa);
 
@@ -1142,9 +1212,398 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     goomPicSubmit,
   };
 
+  const picOpenRightLeftCameraFlagIForImage = {
+    openPic,
+    openRight,
+    openLeft,
+    openCamera,
+    flagForImage,
+  };
+
+  //*********************MarriageInfo********************** */
+  let mrg_Id;
+  const [isHusbandPerfomDevorce, setIsHunbandPerformDevorec] =
+    React.useState(false);
+  const [
+    isHusbandTakenPrmissionFromCurrentWife,
+    setHusbandTakenPermissionFromCurrentWife,
+  ] = React.useState(false);
+
+  const [isDevorcy, setIsDevorcy] = React.useState(false);
+  const [marriageInfo, setMarriageInfo] = React.useState({
+    status: "",
+    nikahnama_no: "",
+    sonod_no: "",
+    marriage_fixed_date: "",
+    marriage_date: "",
+    marriage_reg_date: "",
+    denmohor_status: "",
+    muajjol: "",
+    muajjil: "",
+    denmohor: "",
+    paid_denmohor_amount: "",
+    special_info: "",
+    special_info_for: "",
+    special_info_type: "",
+    divorce_con: "",
+    alimony_con: "",
+    permission_no: "",
+    permission_date: "",
+    spc_status: "",
+    brideDoc: "",
+    groomDoc: "",
+    division_id: "",
+    district_id: "",
+    upazila_id: "",
+    union_id: "",
+    detail_address: "",
+  });
+
+  const [formErrorsMrg, setFormErrorsMrg] = React.useState({
+    gb_id: "",
+    district_id: "",
+    upazila_id: "",
+    union_id: "",
+    post_code: "",
+    detail_address: "",
+    fixed_on: "",
+    marriage_date: "",
+    reg_date: "",
+    denmohor: "",
+    paid_denmohor: "",
+    muazzol: "",
+    muazzil: "",
+    mrg_id: "",
+    whom: "",
+    mrg_status: "",
+    devorce_con: "",
+    revoke_per: "",
+    alimony_pr: "",
+    per_no: "",
+    per_date: "",
+    brideDoc: "",
+    groomDoc: "",
+  });
+  const [files, setFiles] = useState([]);
+
+  const [isAlimonyGiven, setIsAlimonyGiven] = React.useState(false);
+  function maritalStatusChangeHandler(event) {
+    if (event.target.value === "devorcy") {
+      setIsDevorcy(true);
+    } else {
+      setIsDevorcy(false);
+      setIsAlimonyGiven(false);
+    }
+  }
+  function isHusbandPerfomDevorceChangeHandler(event) {
+    console.log(event.target.value);
+    if (event.target.value === "married") {
+      setIsHunbandPerformDevorec(true);
+    }
+    if (event.target.value === "unmarried") {
+      setIsHunbandPerformDevorec(false);
+    }
+    if (isHusbandTakenPrmissionFromCurrentWife === true) {
+      setHusbandTakenPermissionFromCurrentWife(false);
+    }
+  }
+  function isHusbandTakenPermissonFromWifeHandler(event) {
+    if (event.target.value === "takenPermission") {
+      setHusbandTakenPermissionFromCurrentWife(true);
+    }
+  }
+
+  function husbandsRightRevokedChangeHandler(event) {
+    if (event.target.value === "khorposhEvidence") {
+      setIsAlimonyGiven(true);
+    }
+  }
+  let checkFormErrorMrg = () => {
+    console.log(`formErrornid:${formErrors.nid}`);
+    console.log(`formErrorname:${formErrors.name}`);
+    let flag = false;
+    for (const key in formErrors) {
+      if (formErrors[key].length > 0) {
+        flag = true;
+      }
+    }
+    return flag;
+  };
+  const hadnleChangeMrg = (e) => {
+    const { name, value } = e.target;
+    console.log(name);
+    console.log(value);
+    setMarriageInfo({
+      ...marriageInfo,
+      [name]: e.target.value,
+    });
+    switch (e.target.name) {
+      case "marriage_fixed_date":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        formErrors.fixed_on = value === "" && "তারিখ দিন";
+        break;
+      case "marriage_date":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        formErrors.marriage_date = value === "" && "তারিখ দিন";
+        break;
+      case "marriage_reg_date":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        formErrors.reg_date = value === "" && "তারিখ দিন";
+        break;
+      case "denmohor":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        formErrors.denmohor = value === "" && "দেনমোহরের পরিমাণ দিন";
+        break;
+      case "muajjol":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        formErrors.denmohor = value === "" && "মুয়াজ্জল পরিমাণ দিন";
+        break;
+      case "muajjil":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+
+        formErrors.denmohor = value === "" && "মুয়াজ্জিল পরিমাণ দিন";
+        break;
+      case "paid_denmohor_amount":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        formErrors.denmohor = value === "" && "আদায়কৃতদেনমোহরের পরিমাণ দিন";
+        break;
+      case "whom":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        break;
+      case "mrg_status":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        console.log("mrg_vlu", value);
+        break;
+      case "devorce_con":
+        marriageInfo.devorce_con = value;
+        // setMarriageInfo({ ...marriageInfo.devorce_con, [name]: value });
+        console.log("omg", e.target.name);
+        console.log("omg", e.target.value);
+        break;
+      case "alimony_con":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        break;
+
+      case "permission_no":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        break;
+      case "permission_date":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        break;
+      case "brideDoc":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        break;
+      case "groomDoc":
+        setMarriageInfo({ ...marriageInfo, [name]: value });
+        break;
+      case "division_id":
+        console.log("I am in divvvvvvvvvvvvvvvvvvvvvvvvvv");
+        setMarriageInfo({ ...marriageInfo, [e.target.name]: e.target.value });
+        break;
+      case "district_id":
+        setMarriageInfo({ ...marriageInfo, [e.target.name]: e.target.value });
+        break;
+      case "upazila_id":
+        setMarriageInfo({ ...marriageInfo, [e.target.name]: e.target.value });
+        break;
+      case "union_id":
+        setMarriageInfo({ ...marriageInfo, [e.target.name]: e.target.valuee });
+        break;
+      case "detail_address":
+        setMarriageInfo({ ...marriageInfo, [e.target.name]: e.target.valuee });
+        break;
+        break;
+    }
+  };
+  let onSubmitDataMrg = async (e) => {
+    if (e) {
+      e.preventDefault();
+    }
+    console.log("mrg_payloaddddd", marriageInfo);
+    const groomNid = localStorage.getItem("groomNid");
+    const brideNid = localStorage.getItem("brideNid");
+    const uniqueCheck = await axios.get(
+      marriageInofUniqueCheckUrl + groomNid + "/" + brideNid
+    );
+    console.log("mrginfoUniquerdReslut", uniqueCheck);
+
+    if (uniqueCheck.data.data.mrg_info_count === 0) {
+      let payload = {
+        marriage_info: {
+          bride_id: brideNid,
+          groom_id: groomNid,
+          status: "M",
+          nikahnama_no: Math.floor(100000 + Math.random() * 900000),
+          sonod_no: Math.floor(100000 + Math.random() * 900000),
+        },
+        marriage_special_info: {
+          marriage_fixed_date: marriageInfo.marriage_fixed_date,
+          marriage_date: marriageInfo.marriage_date,
+          marriage_reg_date: marriageInfo.marriage_reg_date,
+          denmohor: Number(marriageInfo.denmohor),
+          denmohor_status: "P",
+          muajjol: Number(marriageInfo.muajjol),
+          muajjil: Number(marriageInfo.muajjil),
+          paid_denmohor_amount: Number(marriageInfo.paid_denmohor_amount),
+          special_info: "D",
+          special_info_for: "B",
+          special_info_type: "D",
+          divorce_con: marriageInfo.divorce_con,
+          alimony_con: marriageInfo.alimony_con,
+          permission_no: Number(marriageInfo.permission_no),
+          permission_date:
+            marriageInfo.permission_date === ""
+              ? "2022-5-5"
+              : marriageInfo.permission_date,
+          status: "D",
+        },
+      };
+
+      try {
+        const marriageBasicDataResult = await axios.post(
+          marriageInfoBasicInfoUrl,
+          payload
+        );
+        mrg_Id = marriageBasicDataResult.data.data.mrg_info_id;
+        localStorage.setItem(
+          "nikahnama_no_id",
+          marriageBasicDataResult.data.data.mrg_info_id
+        );
+
+        const marriageInfoTablePrimaryKey =
+          marriageBasicDataResult.data.data.mrg_info_id;
+        const specialMarriageInfoId =
+          marriageBasicDataResult.data.data.mrg_special_id;
+        localStorage.setItem("mrg_info_id", marriageInfoTablePrimaryKey);
+        localStorage.setItem("mrg_special_id", specialMarriageInfoId);
+        console.log("marriageBasicDataResult", marriageBasicDataResult);
+
+        NotificationManager.success("সফলভাবে ডেটা সংরক্ষণ করা হয়েছে");
+
+        //router.push({ pathname: "/coop/income-expense" });
+      } catch (error) {
+        if (error.response) {
+          let message = error.response.data.errors[0].message;
+          NotificationManager.error(message, "ত্রুটি পাওয়া গেছে", 5000);
+        } else if (error.request) {
+          NotificationManager.error(
+            "সংযোগ ত্রুটি পাওয়া গেছে..",
+            "Error",
+            5000
+          );
+        } else if (error) {
+          // NotificationManager.error(error.toString(), "Error", 5000);
+        }
+      }
+    } else {
+      let payload = {
+        marriage_info: {
+          marriage_id: uniqueCheck.data.data.mrg_info_id,
+          bride_id: brideNid,
+          groom_id: groomNid,
+          status: "M",
+        },
+        marriage_special_info: {
+          id: uniqueCheck.data.data.mrg_special_id,
+          marriage_fixed_date: marriageInfo.marriage_fixed_date,
+          marriage_date: marriageInfo.marriage_date,
+          marriage_reg_date: marriageInfo.marriage_reg_date,
+          denmohor: Number(marriageInfo.denmohor),
+          denmohor_status: "P",
+          muajjol: Number(marriageInfo.muajjol),
+          muajjil: Number(marriageInfo.muajjil),
+          paid_denmohor_amount: Number(marriageInfo.paid_denmohor_amount),
+          special_info: "D",
+          special_info_for: "B",
+          special_info_type: "D",
+          divorce_con: marriageInfo.divorce_con,
+          alimony_con: marriageInfo.alimony_con,
+          permission_no: Number(marriageInfo.permission_no),
+          permission_date:
+            marriageInfo.permission_date === ""
+              ? "2022-5-5"
+              : marriageInfo.permission_date,
+          status: "D",
+        },
+      };
+      // console.log("marriagePayloaduppppppp", payload);
+      try {
+        const marriageBasicDataResult = await axios.put(
+          marriageAndSpecialMarriageInfoUpdateUrl,
+          payload
+        );
+
+        const marriageInfoTablePrimaryKey =
+          marriageBasicDataResult.data.data.mrg_info_id;
+        const specialMarriageInfoId =
+          marriageBasicDataResult.data.data.mrg_special_id;
+
+        // console.log(
+        //   "marriageBasicDataResultupppppp",
+        //   marriageBasicDataResult
+        // );
+
+        NotificationManager.success("সফলভাবে ডেটা সংরক্ষণ করা হয়েছে");
+
+        //router.push({ pathname: "/coop/income-expense" });
+      } catch (error) {
+        if (error.response) {
+          let message = error.response.data.errors[0].message;
+          NotificationManager.error(message, "ত্রুটি পাওয়া গেছে", 5000);
+        } else if (error.request) {
+          NotificationManager.error(
+            "সংযোগ ত্রুটি পাওয়া গেছে..",
+            "Error",
+            5000
+          );
+        } else if (error) {
+          // NotificationManager.error(error.toString(), "Error", 5000);
+        }
+      }
+    }
+  };
+  const handleAdd = (newFiles) => {
+    newFiles = newFiles.filter(
+      (file) => !files.find((f) => f.data === file.data)
+    );
+    setFiles([...files, ...newFiles]);
+  };
+
+  const handleDelete = (deleted) => {
+    setFiles(files.filter((f) => f !== deleted));
+  };
+
+  const devorceConOnChagneMrg = (e) => {
+    hadnleChange(e);
+    husbandsRightRevokedChangeHandler(e);
+  };
+  const khorposhOnchangeMrg = (e) => {
+    hadnleChange(e);
+    husbandsRightRevokedChangeHandler(e);
+  };
+
+  const handleAddDeleteObjMrg = {
+    handleAdd,
+    handleDelete,
+  };
+
+  const performDevorcePermissionDevorcyFilesAlimonyStateObjMrg = {
+    isHusbandPerfomDevorce,
+    isHusbandTakenPrmissionFromCurrentWife,
+    isDevorcy,
+    files,
+    isAlimonyGiven,
+  };
+  const marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg = {
+    maritalStatusChangeHandler,
+    isHusbandPerfomDevorceChangeHandler,
+    isHusbandTakenPermissonFromWifeHandler,
+    husbandsRightRevokedChangeHandler,
+  };
+
   return children(
     groomInfo,
-    handleChange,
+    hadnleChange,
     onSubmitData,
     getUserInfoById,
     handlerOnFatchData,
@@ -1155,7 +1614,18 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     picOpenCloseLefRightFunction,
     goomPicSubmit,
     fingerVerify,
-    LeftFP
+    LeftFP,
+    picOpenRightLeftCameraFlagIForImage,
+    marriageInfo,
+    formErrorsMrg,
+    hadnleChangeMrg,
+    onSubmitDataMrg,
+    performDevorcePermissionDevorcyFilesAlimonyStateObjMrg,
+    marritalStatusDevorcePermissionRightRevokChangeHandlerObjMrg,
+    checkFormErrorMrg,
+    handleAddDeleteObjMrg,
+    devorceConOnChagneMrg,
+    khorposhOnchangeMrg
   );
 };
 
