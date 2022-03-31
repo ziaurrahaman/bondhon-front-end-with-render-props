@@ -40,7 +40,7 @@ const index = () => {
               onChange={groomHandleChange}
               onSubmit={onSubmit}
               getUserById={groomGetUserById}
-              title="G"
+              title="MarriageInfo"
               onFetchNidData={onFetchNidData}
               formError={formError}
               data={dataFromBackend}

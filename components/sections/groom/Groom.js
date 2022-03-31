@@ -814,7 +814,7 @@ const Groom = (props) => {
                       sx={{ mr: 1 }}
                       startIcon={<SaveIcon />}
                       onClick={(e) => {
-                        props.onSubmit(e, "G");
+                        props.onSubmit(e, "G", props.groomInfo);
                       }}
                       disabled={checkFormError()}
                     >

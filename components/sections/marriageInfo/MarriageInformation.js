@@ -158,7 +158,7 @@ const MarriageInformation = (props) => {
             onChange={props.onChange}
             onSubmit={props.onSubmit}
             getUserById={() => {
-              props.getUserById("MarriageInfo");
+              props.getUserById("MarriageInfo", "G");
             }}
             title="MarriageInfo"
             onFetchNidData={props.onFetchNidData}
@@ -183,7 +183,7 @@ const MarriageInformation = (props) => {
             onChange={props.onChange}
             onSubmit={props.onSubmit}
             getUserById={() => {
-              props.getUserById("MarriageInfo");
+              props.getUserById("MarriageInfo", "B");
             }}
             title="MarriageInfo"
             onFetchNidData={props.onFetchNidData}
@@ -365,6 +365,8 @@ const MarriageInformation = (props) => {
         //   });
         //   console.log("addresssssUPUPUPPPPUPUPU", result);
         // }
+        localStorage.setItem("groomNid", "");
+        localStorage.setItem("brideNid", "");
       } catch (error) {
       } finally {
       }

@@ -75,7 +75,7 @@ const LawyerWitness = (props) => {
   }, []);
   const onFetchNidServerData = async (e) => {
     // if (e.key === "Enter") {
-    if (lawyerFatherInfo.lawyer_father_id !== "" && lawyerFatherInfo.dob) {
+    if (lawyerFatherInfo.lawyer_father_id && lawyerFatherInfo.dob) {
       try {
         const nidServerData = await axios.get(
           nidServerGetDataUrl +
@@ -106,6 +106,8 @@ const LawyerWitness = (props) => {
       } catch (error) {
         console.log("nidServerError", error);
       }
+    } else {
+      return;
     }
     // }
   };
