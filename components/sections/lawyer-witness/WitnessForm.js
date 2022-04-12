@@ -73,7 +73,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 
 const WitnessForm = () => {
   const dispatch = useDispatch();
-  // const [dynamicInput, setdynamicInput] = useState([{ nid: "" }]);
+
   const [dynamicInput, setDynamicInput] = useState([
     {
       nid: "",
@@ -99,17 +99,7 @@ const WitnessForm = () => {
   }
   let witnessArray = [{}];
   const onFetchNidServerData = async (e, i) => {
-    // if (e.key === "Enter") {
-
     if (dynamicInput[i].nid !== "" && dynamicInput[i].dob) {
-      console.log(
-        "I am hereeeeeeeeeee",
-        nidServerGetDataUrl +
-          "/" +
-          dynamicInput[i].nid +
-          "/" +
-          dynamicInput[i].dob
-      );
       try {
         const nidServerData = await axios.get(
           nidServerGetDataUrl +
@@ -118,36 +108,39 @@ const WitnessForm = () => {
             "/" +
             dynamicInput[i].dob
         );
-        console.log("witnessFormNidServerData", nidServerData.data.data);
-        if (nidServerData) {
-          let newArray = [...dynamicInput];
-          // userNid: nidServerData.data.data.nid
-          //     ? nidServerData.data.data.nid
-          //     : nidServerData.data.data.citizen_doc_no,
 
-          //   dateofBirth: nidServerData.data.data.dob
-          //     ? nidServerData.data.data.dob
-          //     : nidServerData.data.data.citizen_dob,
-          //   religion: "নির্বাচন করুন",
-          //   name: nidServerData.data.data.nameEn
-          //     ? nidServerData.data.data.nameEn
-          //     : nidServerData.data.data.citizen_name,
-          newArray[i]["nid"] = nidServerData.data.data.nid
-            ? nidServerData.data.data.nid
-            : nidServerData.data.data.citizen_doc_no;
-          (newArray[i]["name"] = nidServerData.data.data.nameEn
-            ? nidServerData.data.data.nameEn
+        if (nidServerData.data.data.nidBasic) {
+          let newArray = [...dynamicInput];
+
+          newArray[i]["nid"] = nidServerData.data.data.nidBasic.nid;
+          (newArray[i]["name"] = nidServerData.data.data.nidBasic.nameEn
+            ? nidServerData.data.data.nidBasic.nameEn
             : nidServerData.data.data.citizen_name),
             (newArray[i]["dob"] = formatDateInString(
-              nidServerData.data.data.dob
-                ? nidServerData.data.data.dob
-                : nidServerData.data.data.citizen_dob
+              nidServerData.data.data.nidBasic.dob
+                ? nidServerData.data.data.nidBasic.dob
+                : nidServerData.data.data.citizen_dob,
+              (newArray[i]["detailAddress"] =
+                nidServerData.data.data.nidAddress.unionOrWard +
+                " " +
+                nidServerData.data.data.nidAddress.upozila +
+                " " +
+                nidServerData.data.data.nidAddress.postOffice +
+                " " +
+                nidServerData.data.data.nidAddress.district)
             )),
-            console.log("Array is=====", newArray);
-          setDynamicInput(newArray);
-          // // console.log("wittidd", i
+            setDynamicInput(newArray);
+        } else {
+          let newArray = [...dynamicInput];
+
+          newArray[i]["nid"] = nidServerData.data.data.citizen_doc_no;
+          (newArray[i]["name"] = nidServerData.data.data.citizen_name),
+            (newArray[i]["dob"] = formatDateInString(
+              nidServerData.data.data.citizen_dob,
+              (newArray[i]["detailAddress"] = "Dhaka")
+            )),
+            setDynamicInput(newArray);
         }
-        console.log("nidserverdata", nidServerData);
       } catch (error) {
         console.log("nidServerError", error);
       }
@@ -159,33 +152,12 @@ const WitnessForm = () => {
     const { name, value } = e.target;
     const witnessList = [];
     let newArray = [...dynamicInput];
-    // switch (name) {
-    //   case "nid":
-    //     setDynamicInput2({ ...dynamicInput2, [name]: value });
-    //     // const object = dynamicInput[dynamicInput.length - 1];
-    //     // setDynamicInput(dynamicInput[dynamicInput.length - 1]);
-    //     newArray[index] = dynamicInput2;
-    //     console.log("Array is=====", newArray);
-    //     setDynamicInput(newArray);
-    //     // console.log("wittidd", index);
-    //     // setWitnessId(value);
-    //     localStorage.setItem("witnesses", JSON.stringify(newArray));
-    //     break;
-    // }
 
-    // const witnessList = [];
-    // let newArray = [...dynamicInput];
-    // // const nidWit = (dynamicInput[dynamicInput.length - 1].nid = value);
     newArray[index][name] = value;
     console.log("Array is=====", newArray);
     setDynamicInput(newArray);
-    // // console.log("wittidd", index);
-    // // setWitnessId(value);
-    localStorage.setItem("witnesses", JSON.stringify(newArray));
-    // const list = [...dynamicInput];
 
-    // dispatch(SetLawyerFatherAndWitnessAction({ witness_id: dynamicInput }));
-    // setdynamicInput(dynamicInput);
+    localStorage.setItem("witnesses", JSON.stringify(newArray));
   };
 
   // handle click event of the Remove button

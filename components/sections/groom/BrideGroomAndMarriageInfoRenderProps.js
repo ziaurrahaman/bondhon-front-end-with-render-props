@@ -19,7 +19,7 @@ import {
 } from "../../../url/ApiList";
 import { BrideOrGroomAllInfoGetUrl } from "../../../url/ApiList";
 import { NotificationManager } from "react-notifications";
-
+import { nidServerGetDataUrl } from "../../../url/ApiList";
 const BrideGroomAndMarriageInfoRenderProps = (props) => {
   //Set bride Marital StatusgroomInfo
   const [brideMaritalStatus, setBrideMaritalStatus] = useState();
@@ -293,6 +293,7 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
           [e.target.name]: e.target.value,
         });
         if (userType) {
+          console.log("userType", userType);
           if (userType === "G") {
             localStorage.setItem("groomNid", groomInfo.nid);
           }
@@ -557,20 +558,36 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
     });
   };
 
+  /******Set state according to nid serverData start*/
+
+  const setBrideGroomStateAccordingToNidServerData = () => {};
+
+  /******Set state according to nid serverData end*/
+
   /***Clear Bride Groom State When Necessary End*******/
 
   /***Set Bride Groom State When Necessary Start*******/
   const setGroomBrideStateAccordingToApiData = (date, dataa) => {
     setGroomInfo({
-      nid: dataa.citizenInfo.citizen_doc_no,
-      name: dataa.citizenInfo.citizen_name,
+      nid: dataa.citizenInfo
+        ? dataa.citizenInfo.citizen_doc_no
+        : dataa.nidBasic.nid,
+      name: dataa.citizenInfo
+        ? dataa.citizenInfo.citizen_name
+        : dataa.nidBasic.nameEn,
       dob: date,
-      mobile_no: dataa.citizenInfo.citizen_mobile,
-      email: dataa.citizenInfo.citizen_email,
-      relegion: dataa.citizenInfo.citizen_religion,
-      father_name: dataa.citizenInfo.citizen_father_name,
+      mobile_no: dataa.citizenInfo ? dataa.citizenInfo.citizen_mobile : "",
+      email: dataa.citizenInfo ? dataa.citizenInfo.citizen_email : "",
+      relegion: dataa.citizenInfo
+        ? dataa.citizenInfo.citizen_religion
+        : "নির্বাচন করুন",
+      father_name: dataa.citizenInfo
+        ? dataa.citizenInfo.citizen_father_name
+        : dataa.nidBasic.father,
 
-      mother_name: dataa.citizenInfo.citizen_mother_name,
+      mother_name: dataa.citizenInfo
+        ? dataa.citizenInfo.citizen_mother_name
+        : dataa.nidBasic.mother,
 
       ...(dataa.presentAdress && {
         address_type: dataa.presentAdress.address_type,
@@ -581,36 +598,79 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
         union_id: dataa.presentAdress.union_thana_pur_id,
         post_code: dataa.presentAdress.postal_id,
         details_address: dataa.presentAdress.address_details,
-        ...(dataa.permanentAdress && {
-          per_address_type: "permanent",
-
-          per_division_id: dataa.permanentAdress.division_id,
-          per_district_id: dataa.permanentAdress.district_id,
-          per_upazila_id: dataa.permanentAdress.upazila_city_id,
-          per_union_id: dataa.permanentAdress.union_thana_pur_id,
-          per_post_code: dataa.permanentAdress.postal_id,
-          per_details_address: dataa.permanentAdress.address_details,
-        }),
       }),
+      ...(dataa.permanentAdress && {
+        per_address_type: "permanent",
+
+        per_division_id: dataa.permanentAdress.division_id,
+        per_district_id: dataa.permanentAdress.district_id,
+        per_upazila_id: dataa.permanentAdress.upazila_city_id,
+        per_union_id: dataa.permanentAdress.union_thana_pur_id,
+        per_post_code: dataa.permanentAdress.postal_id,
+        per_details_address: dataa.permanentAdress.address_details,
+      }),
+
       ...(dataa.presentAdress === undefined && {
         address_type: "",
         user_type: "",
-        division_id: "নির্বাচন করুন",
-        district_id: "নির্বাচন করুন",
-        upazila_id: "নির্বাচন করুন",
-        union_id: "নির্বাচন করুন",
-        post_code: "নির্বাচন করুন",
-        details_address: "",
-        ...(dataa.permanentAdress === undefined && {
-          per_address_type: "",
-          per_user_type: "",
-          per_division_id: "নির্বাচন করুন",
-          per_district_id: "নির্বাচন করুন",
-          per_upazila_id: "নির্বাচন করুন",
-          per_union_id: "নির্বাচন করুন",
-          per_post_code: "নির্বাচন করুন",
-          per_details_address: "",
-        }),
+        division_id:
+          // dataa.divDisCityUniThanaPaw
+          //   ? dataa.divDisCityUniThanaPaw.divisionCode
+          //   :
+          "নির্বাচন করুন",
+        district_id:
+          // dataa.divDisCityUniThanaPaw
+          //   ? dataa.divDisCityUniThanaPaw.districtCode
+          //   :
+          "নির্বাচন করুন",
+        upazila_id:
+          //  dataa.divDisCityUniThanaPaw
+          //   ? dataa.divDisCityUniThanaPaw.cityCorpCode
+          //   :
+          "নির্বাচন করুন",
+        union_id:
+          // dataa.divDisCityUniThanaPaw
+          //   ? dataa.divDisCityUniThanaPaw.UniThanaPawCode
+          //   :
+          "নির্বাচন করুন",
+        // post_code: "নির্বাচন করুন",
+        details_address:
+          //  dataa.nidAddress
+          //   ? dataa.nidAddress.unionOrWard +
+          //     " " +
+          //     dataa.nidAddress.upozila +
+          //     " " +
+          //     dataa.nidAddress.postOffice +
+          //     " " +
+          //     dataa.nidAddress.district
+          //   :
+          "",
+      }),
+      ...(dataa.permanentAdress === undefined && {
+        per_address_type: "",
+        per_user_type: "",
+        per_division_id: dataa.divDisCityUniThanaPaw
+          ? dataa.divDisCityUniThanaPaw.divisionCode
+          : "নির্বাচন করুন",
+        per_district_id: dataa.divDisCityUniThanaPaw
+          ? dataa.divDisCityUniThanaPaw.districtCode
+          : "নির্বাচন করুন",
+        per_upazila_id: dataa.divDisCityUniThanaPaw
+          ? dataa.divDisCityUniThanaPaw.cityCorpCode
+          : "নির্বাচন করুন",
+        per_union_id: dataa.divDisCityUniThanaPaw
+          ? dataa.divDisCityUniThanaPaw.UniThanaPawCode
+          : "নির্বাচন করুন",
+        // post_code: "নির্বাচন করুন",
+        per_details_address: dataa.nidAddress
+          ? dataa.nidAddress.unionOrWard +
+            " " +
+            dataa.nidAddress.upozila +
+            " " +
+            dataa.nidAddress.postOffice +
+            " " +
+            dataa.nidAddress.district
+          : "",
       }),
     });
   };
@@ -624,19 +684,30 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
       const nidData = await axios.get(BrideOrGroomAllInfoGetUrl + nid);
       const dataa = nidData.data.data;
       console.log("niddata", dataa);
-      if (dataa !== null) {
+      if (dataa) {
         setData(dataa);
         const date = formatDate(dataa.citizenInfo.citizen_dob);
 
         console.log("data not null", dataa);
         setGroomBrideStateAccordingToApiData(date, dataa);
       } else {
-        console.log("not nulkl");
-        setData(null);
-        console.log("typypee========", dataType);
-        clearBrideGroomState();
+        try {
+          const nidServerData = await axios.get(
+            nidServerGetDataUrl + "/" + groomInfo.nid + "/" + groomInfo.dob
+          );
+          const nidData = nidServerData.data.data;
+          const date = formatDate(nidData.nidBasic.dob);
+          console.log("nidserverData", nidData);
+          setGroomBrideStateAccordingToApiData(date, nidData);
+        } catch (error) {
+          console.log("errorFromNidServer", error);
+        }
+        // console.log("not nulkl");
+        // setData(null);
+        // console.log("typypee========", dataType);
+        // clearBrideGroomState();
       }
-      console.log(date);
+      // console.log(date);
     } catch (error) {
       console.log("error", error.response);
       setGroomInfo({
@@ -1027,10 +1098,11 @@ const BrideGroomAndMarriageInfoRenderProps = (props) => {
           } else {
           }
         } else {
+          fetchUserDataAccordingToPage(nidVal);
           console.log("not nulkl");
-          setData(null);
+          // setData(null);
 
-          clearBrideGroomState();
+          // clearBrideGroomState();
         }
       } catch (error) {
         console.log("error", error);

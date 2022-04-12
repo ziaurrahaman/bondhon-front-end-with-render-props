@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { NotificationManager } from "react-notifications";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -46,6 +46,8 @@ import Breadcrumb from "../../shared/others/breadcrumbs";
 import BrideGroomAndMarriageInfoRenderProps from "../groom/BrideGroomAndMarriageInfoRenderProps";
 import BasicMarriageInfoRenderProps from "./BasicMarriageInfoRenderProps";
 import { PortraitSharp } from "@mui/icons-material";
+import LawyerWitnessFatherContextProvider from "../lawyer-witness/lawyerWitnessContext";
+import { LawyerWitnessFatherContext } from "../lawyer-witness/lawyerWitnessContext";
 // ------------ Stepper Steps -------------
 const steps = [
   "বরের তথ্যাদি",
@@ -148,6 +150,20 @@ const FinalStep = (props) => {
 };
 
 const MarriageInformation = (props) => {
+  const lawyerFather = useContext(LawyerWitnessFatherContext);
+  console.log("context", LawyerWitnessFatherContext);
+
+  const {
+    lawyerFatherInfo,
+    formErrorsLawyer,
+    handleOnChange,
+    formatDate,
+    nidDataFatch,
+    giveValueToTextField,
+    onFetchNidServerData,
+    handlerOnFatchData,
+    onSubmitLawyerInfoData,
+  } = lawyerFather;
   console.log("groooooooooooooomInfooooo", props.groomInfo);
   function getStepContent(step) {
     switch (step) {
@@ -221,7 +237,11 @@ const MarriageInformation = (props) => {
         );
 
       case 3:
-        return <LawyerFatherAndWitness />;
+        return (
+          <LawyerWitnessFatherContextProvider>
+            <LawyerFatherAndWitness />
+          </LawyerWitnessFatherContextProvider>
+        );
 
       default:
         throw new Error("Unknown step");
@@ -261,115 +281,7 @@ const MarriageInformation = (props) => {
       props.onSubmitDataMrg();
     }
     if (activeStep === 3) {
-      console.log("layyyyyyyy", lawyerWitnessInfo);
-      const law_father_info = JSON.parse(
-        localStorage.getItem("law_father_info")
-      );
-
-      console.log("layyyyyyyy2", law_father_info);
-
-      try {
-        const marriageInfoTablePrimaryKey = localStorage.getItem("mrg_info_id");
-        console.log("storage", marriageInfoTablePrimaryKey);
-        console.log("storageWIt", localStorage.getItem("witnesses"));
-        console.log("storageLaw", localStorage.getItem("lawyer_father_id"));
-        const lawwitResult = await axios.put(updateLawyerAndWitnessUrl, {
-          marriage_id: marriageInfoTablePrimaryKey,
-          lawyer_father_id: localStorage.getItem("lawyer_father_id"),
-          witness_id: {
-            witnesses: JSON.parse(localStorage.getItem("witnesses")),
-          },
-        });
-        console.log(
-          "type",
-          typeof JSON.parse(localStorage.getItem("witnesses"))
-        );
-        console.log("lawwitPaylod", {
-          marriage_id: marriageInfoTablePrimaryKey,
-          lawyer_father_id: lawyerWitnessInfo.lawyer_father_id,
-        });
-        console.log("lawWitPutResult", lawwitResult);
-        NotificationManager.success("সফলভাবে ডেটা সংরক্ষণ করা হয়েছে৷");
-        // const checkExistanceResult = await axios.get(
-        //   checkCitizenAndAddressUrl + law_father_info.lawyer_father_id
-        // );
-        // // console.log("existanceResult", checkExistanceResult);
-
-        // const citizen_table_id =
-        //   checkExistanceResult.data.data.citizen_table_id;
-
-        // if (checkExistanceResult.data.data.citizen_row_count === 1) {
-        //   console.log("lay--------father----id", law_father_info.law_father_id);
-        //   console.log("citUPPPUPPUPPUPPU");
-        //   const result = await axios.put(citizenUpdateUrl, {
-        //     citizen_id: citizen_table_id,
-        //     citizen_doc_type: "NID",
-        //     citizen_doc_no: law_father_info.law_father_id,
-
-        //     citizen_name: law_father_info.name,
-        //     citizen_dob: law_father_info.dob,
-        //     citizen_mobile: "",
-        //     citizen_email: "",
-        //     citizen_religion: "",
-        //     citizen_father_name: "",
-        //     citizen_father_nid: 0,
-        //     citizen_mother_name: "",
-        //     citizen_mother_nid: 0,
-        //   });
-        //   console.log("citUPPPUPPUPPUPPU", result);
-        // } else {
-        //   console.log("lay--------father----id", law_father_info.law_father_id);
-        //   const result = await axios.post(citizenCreateUrl, {
-        //     citizen_doc_type: "NID",
-        //     citizen_doc_no: law_father_info.lawyer_father_id,
-
-        //     citizen_name: law_father_info.name,
-        //     citizen_dob: law_father_info.dob,
-        //     citizen_mobile: "",
-        //     citizen_email: "",
-        //     citizen_religion: "",
-        //     citizen_father_name: "",
-        //     citizen_father_nid: 0,
-        //     citizen_mother_name: "",
-        //     citizen_mother_nid: 0,
-        //   });
-        //   console.log("citPOPOPOPOPO", result);
-        // }
-        // console.log("citUPPPUPPUPPUPPU");
-        // if (checkExistanceResult.data.data.present_address_row_count === 0) {
-        //   const result = await axios.post(addressCreateUrl, {
-        //     ref_id: citizen_table_id,
-        //     address_type: "present",
-        //     address_for: "G",
-        //     division_id: 0,
-        //     district_id: law_father_info.district_id,
-        //     upazila_city_id: law_father_info.upazila_id,
-        //     union_thana_pur_id: law_father_info.union_id,
-        //     postal_id: law_father_info.post_code,
-        //     word: "W",
-        //     status: "N",
-        //     address_details: law_father_info.detail_address,
-        //   });
-        //   console.log("addresssssPOPOPOPO", result);
-        // } else {
-        //   const result = await axios.put(addressUpdateUrl, {
-        //     division_id: 10,
-        //     district_id: law_father_info.district_id,
-        //     upazila_city_id: law_father_info.upazila_id,
-        //     union_thana_pur_id: law_father_info.union_id,
-        //     postal_id: law_father_info.post_code,
-        //     word: 10,
-        //     address_details: law_father_info.detail_address,
-        //     ref_id: citizen_table_id,
-        //     address_type: "present",
-        //   });
-        //   console.log("addresssssUPUPUPPPPUPUPU", result);
-        // }
-        localStorage.setItem("groomNid", "");
-        localStorage.setItem("brideNid", "");
-      } catch (error) {
-      } finally {
-      }
+      onSubmitLawyerInfoData();
     }
     // if (activeStep === 2) {
     //   const marriageBasicData = await axios.post(

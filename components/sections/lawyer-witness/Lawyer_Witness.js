@@ -13,256 +13,34 @@ import Address from "../../shared/others/addressNew";
 import WitnessForm from "./WitnessForm";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import MaleIcon from "@mui/icons-material/Male";
-import axios from "axios";
+
 import AddLocationIcon from "@mui/icons-material/AddLocation";
-import {
-  nidVerifyUrl,
-  updateMarriageInfoUrl,
-  nidServerGetDataUrl,
-} from "../../../url/ApiList";
-import { useDispatch, useSelector } from "react-redux";
-import { SetLawyerFatherAndWitnessAction } from "../../../redux/actions/lawyerFatherAndWitnessAction";
+
 import AllFormContext from "../../shared/others/zone_form_context.json";
 import ZoneComponent from "../../shared/others/ZoneComponent";
 import { useEffect } from "react";
+import { LawyerWitnessFatherContext } from "./lawyerWitnessContext";
+import { useContext } from "react";
 const LawyerWitness = (props) => {
-  const lawyerWitnessInfo = useSelector((state) => state.lawyerAndWitness);
-  const dispatch = useDispatch();
   const [allFormContext, setAllFormContext] = useState([]);
-  const [lawyerFatherInfo, setLawyerFatherInfo] = useState({
-    lawyer_father_id: lawyerWitnessInfo.lawyer_father_id
-      ? lawyerWitnessInfo.lawyer_father_id
-      : "",
-    dob: lawyerWitnessInfo.dob ? lawyerWitnessInfo.dob : "",
-    name: lawyerWitnessInfo.name ? lawyerWitnessInfo.name : "",
-    division_id: "",
-    district_id: lawyerWitnessInfo.district_id
-      ? lawyerWitnessInfo.district_id
-      : "",
-    upazila_id: lawyerWitnessInfo.upazila_id
-      ? lawyerWitnessInfo.upazila_id
-      : "",
-    post_code: lawyerWitnessInfo.post_code ? lawyerWitnessInfo.post_code : "",
-    union_id: lawyerWitnessInfo.union_id ? lawyerWitnessInfo.union_id : "",
-    detail_address: lawyerWitnessInfo.detail_address
-      ? lawyerWitnessInfo.detail_address
-      : "",
-  });
+  const lawyerFather = useContext(LawyerWitnessFatherContext);
+  console.log("context", LawyerWitnessFatherContext);
 
-  const [formErrorsLawyer, setFormErrorsLawyer] = useState({
-    nid: "",
-    dob: "",
-    name: "",
-    district_id: "",
-    upazila_id: "",
-    post_code: "",
-    union_id: "",
-    detail_address: "",
-  });
-  function formatDateInString(date) {
-    var d = new Date(date),
-      month = "" + (d.getMonth() + 1),
-      day = "" + d.getDate(),
-      year = d.getFullYear();
-
-    if (month.length < 2) month = "0" + month;
-    if (day.length < 2) day = "0" + day;
-
-    return [year, month, day].join("-");
-  }
+  const {
+    lawyerFatherInfo,
+    formErrorsLawyer,
+    handleOnChange,
+    formatDate,
+    nidDataFatch,
+    giveValueToTextField,
+    onFetchNidServerData,
+    handlerOnFatchData,
+  } = lawyerFather;
   useEffect(() => {
     setAllFormContext(AllFormContext.fields);
   }, []);
-  const onFetchNidServerData = async (e) => {
-    // if (e.key === "Enter") {
-    if (lawyerFatherInfo.lawyer_father_id && lawyerFatherInfo.dob) {
-      try {
-        const nidServerData = await axios.get(
-          nidServerGetDataUrl +
-            "/" +
-            lawyerFatherInfo.lawyer_father_id +
-            "/" +
-            lawyerFatherInfo.dob
-        );
-        if (nidServerData) {
-          setLawyerFatherInfo({
-            ...lawyerFatherInfo,
-            lawyer_father_id: nidServerData.data.data.nid
-              ? nidServerData.data.data.nid
-              : nidServerData.data.data.citizen_doc_no,
 
-            dob: formatDateInString(
-              nidServerData.data.data.dob
-                ? nidServerData.data.data.dob
-                : nidServerData.data.data.citizen_dob
-            ),
-            religion: "নির্বাচন করুন",
-            name: nidServerData.data.data.nameEn
-              ? nidServerData.data.data.nameEn
-              : nidServerData.data.data.citizen_name,
-          });
-        }
-        console.log("nidserverdata", nidServerData.data.data);
-      } catch (error) {
-        console.log("nidServerError", error);
-      }
-    } else {
-      return;
-    }
-    // }
-  };
-
-  function giveValueToTextField(index) {
-    const ids = [
-      lawyerFatherInfo.division_id,
-      lawyerFatherInfo.district_id,
-      lawyerFatherInfo.upazila_id,
-      lawyerFatherInfo.union_id,
-    ];
-    console.log("idINdex", index);
-    return ids[index];
-  }
-
-  /********************************* Validation ******************************************************/
-  const handleOnChange = (e) => {
-    const { name, value } = e.target;
-    dispatch(SetLawyerFatherAndWitnessAction(lawyerFatherInfo));
-    switch (e.target.name) {
-      case "lawyer_father_id":
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: e.target.value,
-        });
-        formErrorsLawyer.nid =
-          value.length == 10 ||
-          value.length == 13 ||
-          value.length == 17 ||
-          value.length == 0
-            ? ""
-            : "আপনার সঠিক এনআইডি প্রদান করুন";
-
-        localStorage.setItem("lawyer_father_id", value);
-        dispatch(
-          SetLawyerFatherAndWitnessAction({
-            lawyer_father_id: value,
-          })
-        );
-
-        console.log("lawyer_father_id", value);
-
-        break;
-      case "dob":
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: value,
-        });
-        // onFetchNidServerData(e);
-        formErrorsLawyer.dob = value === "" && "জন্ম তারিখ দিন";
-        break;
-      case "name":
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: e.target.value,
-        });
-        formErrorsLawyer.name =
-          value.length < 6 && value.length > 0
-            ? "সর্বনিন্ম ৬টি অক্ষর প্রদান"
-            : "";
-        break;
-      case "division_id":
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: e.target.value,
-        });
-        formErrorsLawyer.district_id =
-          value === "" && "জেলা এর ধরণ নির্বাচন করুন";
-        break;
-      case "district_id":
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: e.target.value,
-        });
-        formErrorsLawyer.district_id =
-          value === "" && "জেলা এর ধরণ নির্বাচন করুন";
-        break;
-      case "upazila_id":
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: e.target.value,
-        });
-        formErrorsLawyer.upazila_id =
-          value === "" && "উপজেলা/সিটি কর্পোরেশন নির্বাচন করুন";
-        break;
-      case "union_id":
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: e.target.value,
-        });
-        formErrorsLawyer.union_id =
-          value === "" && "ইউনিয়ন/পৌরসভা/থানা নির্বাচন করুন";
-        break;
-
-      case "post_code":
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: e.target.value,
-        });
-        formErrorsLawyer.post_code = value === "" && "ওয়ার্ড নির্বাচন করুন";
-        break;
-      case "detail_address":
-        console.log("In detail address");
-        setLawyerFatherInfo({
-          ...lawyerFatherInfo,
-          [e.target.name]: e.target.value,
-        });
-        formErrorsLawyer.detail_address =
-          value === "" && "বিস্তারিত ঠিকানা দিন";
-        break;
-    }
-  };
-
-  /******************************** Data Fatch Form NID API ******************************************/
-
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("en-US");
-  };
-
-  const [nidDataFatch, setNidDataFatch] = useState();
-
-  const handlerOnFatchData = async (event) => {
-    setNidDataFatch(event.target.value);
-
-    // event.key === "Enter"
-    if (event.key === "Enter") {
-      let nidVal = nidDataFatch;
-      console.log(nidVal);
-      try {
-        const nidData = await axios.get(nidVerifyUrl + nidVal);
-        console.log(nidData);
-        const data = nidData.data.data;
-        const date = formatDate(data.dob);
-        console.log(date);
-
-        if (data !== null) {
-          setLawyerFatherInfo({
-            name: data.name,
-            dob: date,
-          });
-        } else {
-          setLawyerFatherInfo({
-            name: "",
-            dob: "",
-          });
-        }
-      } catch (error) {
-        console.log("error", error.response);
-        setLawyerFatherInfo({
-          name: "",
-          dob: "",
-        });
-      }
-    }
-  };
+  // console.log("lawFatherState", lawyerFatherInfo);
 
   /**************************************************************************/
 
@@ -356,7 +134,9 @@ const LawyerWitness = (props) => {
               var obj = Object.assign(
                 {},
                 { ...form },
-                { value: giveValueToTextField(i) },
+                {
+                  value: giveValueToTextField(i),
+                },
                 { onChange: handleOnChange },
                 {
                   division_Id: lawyerFatherInfo.division_id,
